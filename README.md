@@ -1,61 +1,83 @@
-# Na Cha (奶茶) — Belajar Mandarin Semanis & Semudah Menikmati Milk Tea 🧋
-
-Aplikasi pembelajaran bahasa Mandarin yang kompatibel untuk **Web dan Mobile**, dengan maskot **Milk Tea (Na Cha 奶茶)** yang imut, sistem penyaringan level **HSK 1, HSK 2, HSK 3** aktif, serta halaman **Profil Pengguna**.
-
----
-
-## 🧋 Maskot & Identitas Brand
-- **Nama Aplikasi**: **Na Cha** (Hanzi: **奶茶**, *Nǎi Chá* yang berarti *Milk Tea* / Teh Susu Boba).
-- **Maskot**: **Cha-Cha** — cangkir teh susu boba menggemaskan dengan boba mutiara, sedotan belang merah-putih, dan ekspresi wajah ceria yang mendampingi dan menyemangati pembelajar di setiap sesi.
-- **Slogan**: *"Belajar Mandarin Semudah & Semanis Menikmati Milk Tea!"*
+# 🧋 Na Cha (奶茶) — PWA Mandarin Learning App
+> **Tugas Akhir Praktikum Pemrograman Mobile / Web Service 2026**  
+> **Judul Tugas Akhir**: *Pengembangan Progressive Web Apps (PWA) Pembelajaran Bahasa Mandarin HSK 1–3 Menggunakan Spaced Repetition System dan Audio Native Berbasis Web Service*
 
 ---
 
-## 🎚️ Penyaringan Level Materi (HSK 1 · HSK 2 · HSK 3)
-Pemilihan level HSK (melalui **dropdown header**, **menu mobile**, atau **halaman profil**) secara langsung dan aktif **menyaring seluruh konten pembelajaran**:
+## 📌 Pemenuhan Ketentuan Tugas Akhir
 
-1. **HSK 1 (Basic · 150 Kata)**:
-   - **Modul**: Dasar Salam, Angka, Keluarga, dan Belanja Kebutuhan Harian (Pasar Buah).
-   - **Kosakata**: 苹果 (*apel*), 香蕉 (*pisang*), 西瓜 (*semangka*), 多少钱 (*berapa harga*), 斤 (*jin = 500g*), 便宜 (*murah*), 贵 (*mahal*), 买 (*beli*), 卖 (*jual*).
-   - **Tata Bahasa**: Pola kalimat tanya harga: `[Subjek/Benda] + [多少钱] + ([Satuan])?`. Pembeda 几 vs 多少.
-   - **Cerita Bacaan**: *"Di Toko Buah Paman Wang (在王叔叔的水果店)"*.
-   - **Kuis & Evaluasi**: Latihan susun kalimat belanja, pencocokan kata buah, dan kuis audio pasar.
-
-2. **HSK 2 (Elementary · 300 Kata)**:
-   - **Modul**: Perjalanan & Cuaca (旅行与天气), Transportasi & MRT (城市交通与地铁), Belanja Pakaian.
-   - **Kosakata**: 机场 (*bandara*), 方便 (*praktis*), 离 (*berjarak dari*), 旅游 (*traveling*), 准备 (*menyiapkan*), 晴天 (*cuaca cerah*), 比 (*komparasi*).
-   - **Tata Bahasa**: Struktur perbandingan komparatif: `[Subjek A] + [比] + [Objek B] + [Kata Sifat]`. Pola jarak: `Tempat A + 离 + Tempat B + 近/远`.
-   - **Cerita Bacaan**: *"Naik Kereta Cepat ke Beijing (坐高铁去北京)"*.
-   - **Kuis & Evaluasi**: Susun kalimat komparatif 比, pencocokan kata traveling, dan menyimak info cuaca.
-
-3. **HSK 3 (Intermediate · 600 Kata)**:
-   - **Modul**: Kehidupan Kantor & Karir (职场生活与会议), Kesehatan & Olahraga, Adaptasi & Pemecahan Masalah.
-   - **Kosakata**: 决定 (*memutuskan*), 相信 (*percaya*), 解决 (*menyelesaikan masalah*), 发现 (*menemukan*), 习惯 (*kebiasaan*), 把 (*partikel pemindah objek*).
-   - **Tata Bahasa**: Pola kalimat disposisi 把: `[Subjek] + [把] + [Objek] + [Kata Kerja] + [Hasil]`. Pola korelasi: `越...越...` (*semakin... semakin...*).
-   - **Cerita Bacaan**: *"Pengalaman Bekerja di Shanghai (在上海工作的经验)"*.
-   - **Kuis & Evaluasi**: Susun kalimat 把, kuis kosakata karir, dan pemahaman bacaan profesional.
+| Ketentuan Praktikum | Status | Implementasi di Na Cha |
+| :--- | :---: | :--- |
+| **Platform PWA (Progressive Web Apps)** | ✅ **Terpenuhi** | Menggunakan `manifest.json`, Service Worker (`sw.js`), ikon PWA 192x192 & 512x512, offline caching, dan installable. |
+| **Menggunakan API (Web Service) Buatan Sendiri (Modul 1)** | ✅ **Terpenuhi** | REST API di `server/server.js` (port 3001) dengan endpoint `/api/vocabularies`, `/api/grammar`, `/api/stories`, `/api/conversations`, `/api/quizzes`, `/api/about` terhubung via `apiService.js`. |
+| **Bottom Navigation Bar** | ✅ **Terpenuhi** | `MobileBottomNav.jsx` dengan 6 menu: Beranda, Belajar, Membaca, Dialog, Kuis, Profil. |
+| **Minimal 5 Halaman** | ✅ **Terpenuhi (6 Halaman)** | 1. Beranda, 2. Kosakata & Tata Bahasa, 3. Ruang Baca, 4. Percakapan, 5. Kuis & Evaluasi, 6. Profil & About. |
+| **Minimal 2 Halaman List ➔ Detail** | ✅ **Terpenuhi** | **Halaman 1**: List Kosakata (Search & Grid) ➔ Modal Detail Kosakata lengkap.<br>**Halaman 2**: List Topik Percakapan ➔ Detail Dialog line-by-line & audio. |
+| **Halaman Profile / About Aplikasi** | ✅ **Terpenuhi** | `ProfileTab.jsx` memiliki kartu identitas pengguna, 8 pilihan maskot lucu, dan seksi resmi "About Aplikasi & Lembar Tugas Akhir". |
+| **Deploy Free Hosting (Khusus PWA)** | ✅ **Siap Deploy** | Konfigurasi `vercel.json` dan `netlify.toml` siap 1-click deploy ke Vercel atau Netlify. |
+| **Source Code di GitHub** | ✅ **Siap Push** | Repositori Git lokal sudah diinisialisasi dan siap di-push ke GitHub. |
 
 ---
 
-## 👤 Halaman Profil (Profile & Level Management)
-Halaman profil komprehensif ([`src/components/ProfileTab.jsx`](file:///c:/Users/MSI/na%20cha/src/components/ProfileTab.jsx)) menyediakan:
-- **Pengaturan Level HSK**: Memilih level HSK aktif (1, 2, atau 3) dalam 1 klik dengan tinjauan target kata dan silabus.
-- **Kartu Identitas Pengguna & Maskot Na Cha**: Mengubah nama siswa, melihat lencana pro, dan pesan motivasi dari maskot.
-- **Statistik Belajar**: Hari streak beruntun, total XP terkumpul, jumlah kata yang dihafal, dan progres % penguasaan tiap level HSK.
-- **Pengaturan Target Harian**: Slider penyesuaian target XP (20 s/d 150 XP) dan target menit belajar (5 s/d 60 menit per hari).
+## 📡 Web Service REST API (Modul 1)
 
----
-
-## 🚀 Cara Menjalankan
+Server REST API dapat dijalankan secara mandiri dengan Node.js bawaan tanpa dependensi pihak ketiga:
 
 ```bash
-# Server pengembangan:
-npm run dev
-
-# Build produksi:
-npm run build
-
-# Preview build produksi:
-npm run preview
+# Menjalankan REST API Server (Port 3001)
+npm run server
 ```
-Buka peramban pada `http://localhost:3000`.
+
+### Daftar Endpoint REST API:
+- `GET /api/health` — Status kesehatan Web Service
+- `GET /api/vocabularies?level=HSK 1&search=...` — Daftar kosakata HSK
+- `GET /api/vocabularies/:id` — Detail satu kosakata
+- `GET /api/grammar?level=HSK 1` — Rumus pola tata bahasa
+- `GET /api/stories?level=HSK 1` — Cerita ruang baca
+- `GET /api/conversations` — Daftar percakapan 9 kategori
+- `GET /api/conversations/:category` — Detail dialog per kategori
+- `GET /api/quizzes?level=HSK 1` — Soal evaluasi & kuis
+- `GET /api/about` — Informasi metadata aplikasi & tugas akhir
+
+---
+
+## 🚀 Cara Menjalankan Aplikasi di Lokal
+
+### 1. Jalankan Backend API:
+```bash
+npm run server
+# API aktif di http://localhost:3001
+```
+
+### 2. Jalankan Frontend PWA:
+```bash
+npm run dev
+# Buka di browser: http://localhost:3000
+```
+
+---
+
+## ☁️ Panduan Deploy ke Free Hosting (Vercel / Netlify)
+
+### Opsi A: Deploy ke Vercel (Disarankan)
+1. Buka [vercel.com](https://vercel.com) dan login dengan akun GitHub Anda.
+2. Klik **Add New...** ➔ **Project** ➔ Import repositori `na-cha`.
+3. Framework Preset: **Vite**.
+4. Klik **Deploy**! File `vercel.json` sudah terpasang otomatis.
+
+### Opsi B: Deploy ke Netlify
+1. Buka [netlify.com](https://netlify.com) dan login.
+2. Klik **Add new site** ➔ **Import an existing project** dari GitHub.
+3. Build command: `npm run build`, Publish directory: `dist`. File `netlify.toml` sudah tersedia.
+
+---
+
+## 🐙 Panduan Upload ke GitHub
+
+1. Buat repositori baru di [github.com/new](https://github.com/new) dengan nama `na-cha`.
+2. Di terminal folder proyek, jalankan:
+```bash
+git remote add origin https://github.com/USERNAME_ANDA/na-cha.git
+git branch -M main
+git push -u origin main
+```
