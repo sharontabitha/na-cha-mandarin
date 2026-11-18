@@ -512,56 +512,6 @@ export default function VocabGrammarTab({
               )}
             </div>
 
-            {/* Tone Contour Visualizer Guide (Kontur Nada 1 - 4) */}
-            <div className="bg-[#faf6f0] border border-[#ebdccb] rounded-2xl p-3 space-y-2">
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-bold text-[#5c391d] flex items-center space-x-1.5">
-                  <span>🎵 Kontur Nada (Pitch Tone):</span>
-                  <span className="text-[#784e2a] font-extrabold bg-[#f5ece1] px-2 py-0.5 rounded-lg border border-[#ebdccb]">
-                    {currentVocab.tones}
-                  </span>
-                </span>
-                <span className="text-[10px] text-[#8c6849]">Simulasi Visual</span>
-              </div>
-              <div className="grid grid-cols-4 gap-1.5 text-center text-[10px]">
-                <button
-                  type="button"
-                  onClick={() => audioService.playMandarin("妈", 0.9)}
-                  title="Dengarkan Contoh Nada 1 (mā)"
-                  className={`p-1.5 rounded-xl border transition cursor-pointer hover:scale-102 ${currentVocab.tones?.includes('1') ? 'bg-[#fef3c7] border-[#d97706] font-bold text-[#78350f] shadow-2xs' : 'bg-white border-[#ebdccb] text-[#8c6849] hover:bg-[#faf6f0]'}`}
-                >
-                  <span className="block text-xs font-mono font-black text-[#784e2a]">ˉ 55</span>
-                  <span>Nada 1 Datar</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => audioService.playMandarin("麻", 0.9)}
-                  title="Dengarkan Contoh Nada 2 (má)"
-                  className={`p-1.5 rounded-xl border transition cursor-pointer hover:scale-102 ${currentVocab.tones?.includes('2') ? 'bg-[#fef3c7] border-[#d97706] font-bold text-[#78350f] shadow-2xs' : 'bg-white border-[#ebdccb] text-[#8c6849] hover:bg-[#faf6f0]'}`}
-                >
-                  <span className="block text-xs font-mono font-black text-[#784e2a]">ˊ 35</span>
-                  <span>Nada 2 Naik</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => audioService.playMandarin("马", 0.9)}
-                  title="Dengarkan Contoh Nada 3 (mǎ)"
-                  className={`p-1.5 rounded-xl border transition cursor-pointer hover:scale-102 ${currentVocab.tones?.includes('3') ? 'bg-[#fef3c7] border-[#d97706] font-bold text-[#78350f] shadow-2xs' : 'bg-white border-[#ebdccb] text-[#8c6849] hover:bg-[#faf6f0]'}`}
-                >
-                  <span className="block text-xs font-mono font-black text-[#784e2a]">ˇ 214</span>
-                  <span>Nada 3 Lengkung</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => audioService.playMandarin("骂", 0.9)}
-                  title="Dengarkan Contoh Nada 4 (mà)"
-                  className={`p-1.5 rounded-xl border transition cursor-pointer hover:scale-102 ${currentVocab.tones?.includes('4') ? 'bg-[#fef3c7] border-[#d97706] font-bold text-[#78350f] shadow-2xs' : 'bg-white border-[#ebdccb] text-[#8c6849] hover:bg-[#faf6f0]'}`}
-                >
-                  <span className="block text-xs font-mono font-black text-[#784e2a]">ˋ 51</span>
-                  <span>Nada 4 Menukik</span>
-                </button>
-              </div>
-            </div>
 
             {/* Dekonstruksi Radikal & Komponen */}
             {currentVocab.radicals && (
