@@ -14,9 +14,11 @@ import {
   Compass, 
   ChevronRight,
   TrendingUp,
-  Volume2
+  Volume2,
+  Award
 } from 'lucide-react';
 import { getModulesByLevel, HSK_LEVELS_META, USER_PROFILE, getVocabulariesByLevel } from '../data/learningData';
+import { isLevelMockUnlocked } from '../data/mockTestData';
 import Mascot from './Mascot';
 
 export default function HomeTab({ 
@@ -24,12 +26,15 @@ export default function HomeTab({
   onSelectTab, 
   onStartFlashcards, 
   userStats,
-  userProfile
+  userProfile,
+  completedUnits = [],
+  onStartUnit = null
 }) {
   const currentModules = getModulesByLevel(currentLevel);
   const currentVocabs = getVocabulariesByLevel(currentLevel);
   const activeLevelMeta = HSK_LEVELS_META[currentLevel] || HSK_LEVELS_META["HSK 1"];
   const levelProgress = USER_PROFILE.hskProgress[currentLevel] || { completionPercent: 50 };
+  const mockUnlockInfo = isLevelMockUnlocked(currentLevel, completedUnits);
 
   const activeModule = currentModules.find(m => m.status === 'active') || currentModules[0];
   const [expandedModuleId, setExpandedModuleId] = React.useState(activeModule?.id);
@@ -381,8 +386,8 @@ export default function HomeTab({
                     {module.units && expandedModuleId === module.id && (
                       <div className="mt-4 pt-4 border-t border-[#f5ece1] space-y-2 animate-fadeIn">
                         {module.units.map((unit) => {
-                          const unitCompleted = unit.status === 'completed';
-                          const unitActive = unit.status === 'active';
+                          const unitCompleted = completedUnits.includes(unit.id) || unit.status === 'completed';
+                          const unitActive = unit.status === 'active' || (!unitCompleted && !completedUnits.includes(unit.id));
 
                           return (
                             <div
@@ -412,13 +417,13 @@ export default function HomeTab({
 
                               <button
                                 onClick={() => {
-                                  if (unit.type === 'vocab' || unit.type === 'grammar') {
+                                  if (onStartUnit) {
+                                    onStartUnit(unit);
+                                  } else {
                                     onSelectTab('vocab-grammar');
-                                  } else if (unit.type === 'listening' || unit.type === 'reading') {
-                                    onSelectTab('reading');
                                   }
                                 }}
-                                className={`px-2.5 py-1 rounded-xl font-bold text-[11px] transition ${
+                                className={`px-2.5 py-1 rounded-xl font-bold text-[11px] transition cursor-pointer active:scale-95 ${
                                   unitActive
                                     ? 'bg-[#784e2a] text-white hover:bg-[#5c391d]'
                                     : unitCompleted
@@ -426,7 +431,7 @@ export default function HomeTab({
                                     : 'bg-white border border-[#ebdccb] text-[#784e2a] hover:bg-[#f5ece1]'
                                 }`}
                               >
-                                {unitActive ? 'Buka Unit' : unitCompleted ? 'Ulangi' : 'Buka'}
+                                {unitActive ? 'Buka Unit ➔' : unitCompleted ? 'Ulangi' : 'Buka'}
                               </button>
                             </div>
                           );
@@ -437,6 +442,56 @@ export default function HomeTab({
                 </div>
               );
             })}
+          </div>
+
+          {/* CAPSTONE HSK MOCK TEST UNLOCK CARD */}
+          <div className={`rounded-3xl p-6 border-2 transition-all ${
+            mockUnlockInfo.isUnlocked
+              ? 'bg-gradient-to-br from-[#fef3c7] via-[#fffdfa] to-[#fde68a]/40 border-[#d97706] shadow-md animate-fadeIn'
+              : 'bg-[#faf6f0] border-[#ebdccb] opacity-95'
+          }`}>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="flex items-start space-x-3.5">
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 text-2xl shadow-xs ${
+                  mockUnlockInfo.isUnlocked ? 'bg-[#784e2a] text-white' : 'bg-[#ead7c4] text-[#8c6849]'
+                }`}>
+                  {mockUnlockInfo.isUnlocked ? '🏆' : '🔒'}
+                </div>
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md border ${
+                      mockUnlockInfo.isUnlocked
+                        ? 'bg-[#dcfce7] text-[#15803d] border-[#bbf7d0]'
+                        : 'bg-[#f5ece1] text-[#784e2a] border-[#ebdccb]'
+                    }`}>
+                      {mockUnlockInfo.isUnlocked ? 'MOCK TEST RESMI TERBUKA' : 'CAPSTONE MOCK TEST (TERKUNCI)'}
+                    </span>
+                    <span className="text-xs font-bold text-[#8c6849]">
+                      {mockUnlockInfo.completedCount}/{mockUnlockInfo.totalCount} Unit ({mockUnlockInfo.percentage}%)
+                    </span>
+                  </div>
+                  <h3 className="text-base font-bold text-[#3d2411] mt-1">
+                    Simulasi Ujian Resmi HSK {currentLevel} (Listening, Reading, Writing &amp; Speaking)
+                  </h3>
+                  <p className="text-xs text-[#784e2a] mt-0.5 max-w-xl">
+                    {mockUnlockInfo.isUnlocked
+                      ? 'Luar biasa! Seluruh bab unit telah kamu kuasai. Uji kemampuan 4 aspek bahasa berstandar HSK resmi sekarang!'
+                      : `Selesaikan seluruh ${mockUnlockInfo.totalCount} unit pada kurikulum ${currentLevel} di atas untuk membuka simulasi ujian resmi.`}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => onSelectTab('quiz')}
+                className={`px-5 py-3 rounded-2xl font-bold text-xs transition flex items-center justify-center space-x-2 shadow-xs cursor-pointer active:scale-95 shrink-0 ${
+                  mockUnlockInfo.isUnlocked
+                    ? 'bg-[#784e2a] hover:bg-[#5c391d] text-white shadow-sm'
+                    : 'bg-[#f5ece1] hover:bg-[#ead7c4] text-[#784e2a] border border-[#dcc1a4]'
+                }`}
+              >
+                <span>{mockUnlockInfo.isUnlocked ? 'Mulai Mock Test Resmi ➔' : 'Lihat Status Ujian ➔'}</span>
+              </button>
+            </div>
           </div>
         </div>
 

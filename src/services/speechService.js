@@ -8,7 +8,23 @@ class AudioService {
     this.speechSynth = typeof window !== 'undefined' ? window.speechSynthesis : null;
     this.audioCtx = null;
     this.selectedVoice = null;
+    this.defaultRate = 1.0;
     this.initVoice();
+  }
+
+  setDefaultRate(rate) {
+    this.defaultRate = rate;
+    try {
+      localStorage.setItem('nacha_audio_speed', String(rate));
+    } catch (e) {}
+  }
+
+  getDefaultRate() {
+    try {
+      const saved = localStorage.getItem('nacha_audio_speed');
+      if (saved) return parseFloat(saved);
+    } catch (e) {}
+    return this.defaultRate;
   }
 
   initVoice() {
@@ -28,7 +44,7 @@ class AudioService {
     }
   }
 
-  playMandarin(text, rate = 1.0, onStart, onEnd) {
+  playMandarin(text, rate = null, onStart, onEnd) {
     if (!this.speechSynth) {
       console.warn('Speech synthesis not supported');
       if (onEnd) onEnd();
@@ -40,7 +56,8 @@ class AudioService {
       const cleanText = text.replace(/[\(\)\[\]（）]/g, '').trim();
       const utterance = new SpeechSynthesisUtterance(cleanText);
       utterance.lang = 'zh-CN';
-      utterance.rate = Math.max(0.5, Math.min(rate, 1.5));
+      const effectiveRate = rate !== null ? rate : this.getDefaultRate();
+      utterance.rate = Math.max(0.5, Math.min(effectiveRate, 1.5));
       utterance.pitch = 1.0;
 
       if (this.selectedVoice) {

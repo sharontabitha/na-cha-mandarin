@@ -25,7 +25,10 @@ export default function VocabGrammarTab({
   currentLevel = "HSK 1", 
   onCompleteLesson, 
   onStartFlashcardMode,
-  globalShowPinyin = true
+  globalShowPinyin = true,
+  audioSpeed = 1.0,
+  activeUnitSession = null,
+  onProceedToReading = null
 }) {
   const vocabList = getVocabulariesByLevel(currentLevel);
   const grammarData = getGrammarByLevel(currentLevel);
@@ -37,7 +40,7 @@ export default function VocabGrammarTab({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDetailVocab, setSelectedDetailVocab] = useState(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [audioSpeed, setAudioSpeed] = useState(1.0);
+  const [localAudioSpeed, setLocalAudioSpeed] = useState(audioSpeed || 1.0);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [completedVocabIds, setCompletedVocabIds] = useState(() => {
     try {
@@ -246,6 +249,37 @@ export default function VocabGrammarTab({
             <span>{isCurrentVocabCompleted ? 'Tersimpan ✓' : 'Tandai Selesai'}</span>
           </button>
         </div>
+      </div>
+
+      {/* Guided Lesson Workflow Banner: Langkah 1/3 (Kosakata ➔ Ruang Baca) */}
+      <div className="bg-gradient-to-r from-[#f5ece1] to-[#faf6f0] p-4 sm:p-5 rounded-3xl border border-[#dcc1a4] flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs">
+        <div className="flex items-center space-x-3 text-left w-full sm:w-auto">
+          <div className="w-9 h-9 rounded-2xl bg-[#784e2a] text-white flex items-center justify-center font-black text-xs shrink-0 shadow-xs">
+            1/3
+          </div>
+          <div>
+            <div className="flex items-center space-x-2">
+              <span className="text-[10px] uppercase font-extrabold tracking-wider text-[#784e2a] bg-white px-2 py-0.5 rounded-md border border-[#ebdccb]">
+                ALUR BELAJAR BERTAHAP
+              </span>
+              <span className="text-[11px] font-bold text-[#8c6849]">Langkah 1 dari 3</span>
+            </div>
+            <h3 className="text-sm font-bold text-[#3d2411] mt-0.5">
+              {activeUnitSession?.title ? activeUnitSession.title : `Kosakata & Tata Bahasa ${currentLevel}`}
+            </h3>
+          </div>
+        </div>
+
+        <button
+          onClick={() => {
+            audioService.playTapSound();
+            if (onProceedToReading) onProceedToReading();
+          }}
+          className="w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-[#784e2a] hover:bg-[#5c391d] text-white text-xs font-bold transition flex items-center justify-center space-x-2 shadow-xs cursor-pointer active:scale-95 shrink-0"
+        >
+          <span>Lanjut ke Ruang Baca (Reading)</span>
+          <ArrowRight className="w-4 h-4" />
+        </button>
       </div>
 
       {/* View Mode Switcher to prevent visual clutter & dizziness */}

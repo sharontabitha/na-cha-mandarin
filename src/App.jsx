@@ -10,10 +10,107 @@ import FlashcardModal from './components/FlashcardModal';
 import BookmarkDrawer from './components/BookmarkDrawer';
 import MobileBottomNav from './components/MobileBottomNav';
 import { USER_PROFILE } from './data/learningData';
+import { audioService } from './services/speechService';
+import confetti from 'canvas-confetti';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [currentLevel, setCurrentLevel] = useState("HSK 1");
+  const [audioSpeed, setAudioSpeed] = useState(() => audioService.getDefaultRate());
+  const [installPrompt, setInstallPrompt] = useState(null);
+
+  // Completed Units Tracking across all levels
+  const [completedUnits, setCompletedUnits] = useState(() => {
+    try {
+      const saved = localStorage.getItem('nacha_completed_units');
+      if (saved) return JSON.parse(saved);
+    } catch(e) {}
+    // Initial completed units (matches MODULES_BY_LEVEL default)
+    return ["u-1-1", "u-1-2", "u-2-1", "u-2-2", "u-3-1"];
+  });
+
+  // Active Guided Unit Learning Session
+  // { unitId, title, level, step: 'vocab' | 'reading' | 'conversation' }
+  const [activeUnitSession, setActiveUnitSession] = useState(null);
+
+  // PWA Install Prompt Listener
+  React.useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstallApp = async () => {
+    if (!installPrompt) {
+      alert("Aplikasi Na Cha sudah terpasang atau buka menu browser Anda lalu pilih 'Tambahkan ke Layar Utama' (Add to Home Screen).");
+      return;
+    }
+    installPrompt.prompt();
+    try {
+      const { outcome } = await installPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setInstallPrompt(null);
+      }
+    } catch(e) {}
+  };
+
+  const handleStartUnit = (unit) => {
+    setActiveUnitSession({
+      unitId: unit.id,
+      title: unit.title,
+      level: currentLevel,
+      step: 'vocab'
+    });
+    setActiveTab('vocab-grammar');
+  };
+
+  const handleNextStepInSession = (nextTab) => {
+    if (activeUnitSession) {
+      setActiveUnitSession(prev => ({ ...prev, step: nextTab }));
+    }
+    setActiveTab(nextTab);
+  };
+
+  const handleCompleteUnitLesson = () => {
+    if (activeUnitSession) {
+      const uId = activeUnitSession.unitId;
+      setCompletedUnits(prev => {
+        if (prev.includes(uId)) return prev;
+        const updated = [...prev, uId];
+        try {
+          localStorage.setItem('nacha_completed_units', JSON.stringify(updated));
+        } catch(e) {}
+        return updated;
+      });
+    }
+
+    // Award +100 XP
+    setUserStats(prev => ({
+      ...prev,
+      xp: prev.xp + 100,
+      currentDayXP: Math.min(prev.dailyGoalXP, prev.currentDayXP + 30),
+      totalWordsLearned: prev.totalWordsLearned + 5
+    }));
+
+    audioService.playSuccessSound();
+    try {
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    } catch(e) {}
+
+    // Clear session and return to home
+    setActiveUnitSession(null);
+    setActiveTab('home');
+  };
+
+  const handleRepeatUnitLesson = () => {
+    if (activeUnitSession) {
+      setActiveUnitSession(prev => ({ ...prev, step: 'vocab' }));
+    }
+    setActiveTab('vocab-grammar');
+  };
   const [userProfile, setUserProfile] = useState(() => {
     try {
       const saved = localStorage.getItem('nacha_user_profile');
@@ -94,6 +191,9 @@ export default function App() {
         onOpenBookmarks={() => setIsBookmarkOpen(true)}
         showGlobalPinyin={showGlobalPinyin}
         setShowGlobalPinyin={setShowGlobalPinyin}
+        audioSpeed={audioSpeed}
+        setAudioSpeed={setAudioSpeed}
+        onInstallApp={handleInstallApp}
       />
 
       {/* Main Content Area */}
@@ -105,6 +205,8 @@ export default function App() {
             onStartFlashcards={() => setIsFlashcardOpen(true)}
             userStats={userStats}
             userProfile={userProfile}
+            completedUnits={completedUnits}
+            onStartUnit={handleStartUnit}
           />
         )}
 
@@ -114,6 +216,9 @@ export default function App() {
             onCompleteLesson={handleLessonComplete}
             onStartFlashcardMode={() => setIsFlashcardOpen(true)}
             globalShowPinyin={showGlobalPinyin}
+            audioSpeed={audioSpeed}
+            activeUnitSession={activeUnitSession}
+            onProceedToReading={() => handleNextStepInSession('reading')}
           />
         )}
 
@@ -121,7 +226,20 @@ export default function App() {
           <ReadingTab
             currentLevel={currentLevel}
             onProceedToQuiz={() => setActiveTab('quiz')}
+            onProceedToConversation={() => handleNextStepInSession('conversation')}
             globalShowPinyin={showGlobalPinyin}
+            audioSpeed={audioSpeed}
+            activeUnitSession={activeUnitSession}
+          />
+        )}
+
+        {activeTab === 'conversation' && (
+          <ConversationTab 
+            globalShowPinyin={showGlobalPinyin}
+            audioSpeed={audioSpeed}
+            activeUnitSession={activeUnitSession}
+            onCompleteLesson={handleCompleteUnitLesson}
+            onRepeatLesson={handleRepeatUnitLesson}
           />
         )}
 
@@ -130,12 +248,9 @@ export default function App() {
             currentLevel={currentLevel}
             onCompleteQuiz={handleQuizComplete}
             globalShowPinyin={showGlobalPinyin}
-          />
-        )}
-
-        {activeTab === 'conversation' && (
-          <ConversationTab 
-            globalShowPinyin={showGlobalPinyin}
+            completedUnits={completedUnits}
+            audioSpeed={audioSpeed}
+            onSelectTab={setActiveTab}
           />
         )}
 
@@ -149,6 +264,7 @@ export default function App() {
             onUpdateProfile={handleUpdateProfile}
             onStartFlashcards={() => setIsFlashcardOpen(true)}
             onOpenBookmarks={() => setIsBookmarkOpen(true)}
+            onInstallApp={handleInstallApp}
           />
         )}
       </main>

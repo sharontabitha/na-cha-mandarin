@@ -14,7 +14,8 @@ import {
   Bookmark,
   Check,
   Settings,
-  User
+  User,
+  Download
 } from 'lucide-react';
 import { HSK_LEVELS_META, USER_PROFILE } from '../data/learningData';
 import Mascot from './Mascot';
@@ -29,7 +30,10 @@ export default function Header({
   setLevel,
   onOpenBookmarks,
   showGlobalPinyin = true,
-  setShowGlobalPinyin
+  setShowGlobalPinyin,
+  onInstallApp,
+  audioSpeed = 1.0,
+  setAudioSpeed
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [levelDropdownOpen, setLevelDropdownOpen] = useState(false);
@@ -164,6 +168,42 @@ export default function Header({
                 <span className={`text-[9px] uppercase px-1 py-0.5 rounded font-mono font-bold ${showGlobalPinyin ? 'bg-[#784e2a] text-white' : 'bg-[#ebdccb] text-[#5c391d]'}`}>
                   {showGlobalPinyin ? 'ON' : 'OFF'}
                 </span>
+              </button>
+            )}
+
+            {/* Audio Speed Toggle (🐢 0.75x / ⚡ 1.0x) */}
+            {setAudioSpeed && (
+              <button
+                onClick={() => {
+                  const nextSpeed = audioSpeed === 0.75 ? 1.0 : 0.75;
+                  setAudioSpeed(nextSpeed);
+                  audioService.setDefaultRate(nextSpeed);
+                  audioService.playTapSound();
+                }}
+                className={`flex items-center space-x-1 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl text-xs font-bold transition border ${
+                  audioSpeed === 0.75
+                    ? 'bg-[#fef3c7] text-[#92400e] border-[#fde68a]'
+                    : 'bg-[#faf6f0] text-[#784e2a] border-[#ebdccb] hover:bg-[#f5ece1]'
+                }`}
+                title={`Kecepatan Audio: ${audioSpeed}x. Klik untuk mengubah ke ${audioSpeed === 0.75 ? '1.0x (Normal)' : '0.75x (Lambat)'}`}
+              >
+                <span>{audioSpeed === 0.75 ? '🐢 0.75x' : '⚡ 1.0x'}</span>
+              </button>
+            )}
+
+            {/* Install PWA Button */}
+            {onInstallApp && (
+              <button
+                onClick={() => {
+                  audioService.playTapSound();
+                  onInstallApp();
+                }}
+                className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-[#784e2a] hover:bg-[#5c391d] text-white transition shadow-2xs cursor-pointer active:scale-95"
+                title="Pasang aplikasi Na Cha di layar utama atau desktop Anda (PWA)"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span className="hidden md:inline">Pasang App</span>
+                <span className="md:hidden">PWA</span>
               </button>
             )}
           </div>
@@ -355,6 +395,19 @@ export default function Header({
               <User className="w-4 h-4 shrink-0 text-[#784e2a]" />
               <span>Profil Pengguna &amp; Target Belajar</span>
             </button>
+
+            {onInstallApp && (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onInstallApp();
+                }}
+                className="flex items-center justify-center space-x-2 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-[#784e2a] text-white shadow-sm mt-2 transition"
+              >
+                <Download className="w-4 h-4" />
+                <span>Pasang Aplikasi di Layar Utama (PWA)</span>
+              </button>
+            )}
           </div>
         </div>
       )}

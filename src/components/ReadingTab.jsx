@@ -22,13 +22,16 @@ import Mascot from './Mascot';
 export default function ReadingTab({ 
   currentLevel = "HSK 1", 
   onProceedToQuiz,
-  globalShowPinyin = true
+  onProceedToConversation,
+  globalShowPinyin = true,
+  audioSpeed = 1.0,
+  activeUnitSession = null
 }) {
   const readingStory = getReadingStoryByLevel(currentLevel);
   const activeLevelMeta = HSK_LEVELS_META[currentLevel] || HSK_LEVELS_META["HSK 1"];
 
   const [isPlayingFullAudio, setIsPlayingFullAudio] = useState(false);
-  const [audioSpeed, setAudioSpeed] = useState(1.0);
+  const [speed, setSpeed] = useState(audioSpeed || 1.0);
   const [showPinyin, setShowPinyin] = useState(globalShowPinyin);
   const [showIndoTranslation, setShowIndoTranslation] = useState(false);
   const [audioBurstsEnabled, setAudioBurstsEnabled] = useState(true);
@@ -61,7 +64,7 @@ export default function ReadingTab({
       setIsPlayingFullAudio(true);
       audioService.playMandarin(
         readingStory.fullTextHanzi,
-        audioSpeed,
+        speed,
         () => setIsPlayingFullAudio(true),
         () => setIsPlayingFullAudio(false)
       );
@@ -69,7 +72,7 @@ export default function ReadingTab({
   };
 
   const handlePlayClip = (text) => {
-    audioService.playMandarin(text, audioSpeed);
+    audioService.playMandarin(text, speed);
   };
 
   const handleSelectWord = (token) => {
@@ -91,6 +94,37 @@ export default function ReadingTab({
 
   return (
     <div className="py-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 animate-fadeIn">
+      {/* Guided Lesson Workflow Banner: Langkah 2/3 (Ruang Baca ➔ Percakapan) */}
+      <div className="bg-gradient-to-r from-[#f5ece1] to-[#faf6f0] p-4 sm:p-5 rounded-3xl border border-[#dcc1a4] flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs">
+        <div className="flex items-center space-x-3 text-left w-full sm:w-auto">
+          <div className="w-9 h-9 rounded-2xl bg-[#784e2a] text-white flex items-center justify-center font-black text-xs shrink-0 shadow-xs">
+            2/3
+          </div>
+          <div>
+            <div className="flex items-center space-x-2">
+              <span className="text-[10px] uppercase font-extrabold tracking-wider text-[#784e2a] bg-white px-2 py-0.5 rounded-md border border-[#ebdccb]">
+                ALUR BELAJAR BERTAHAP
+              </span>
+              <span className="text-[11px] font-bold text-[#8c6849]">Langkah 2 dari 3</span>
+            </div>
+            <h3 className="text-sm font-bold text-[#3d2411] mt-0.5">
+              {activeUnitSession?.title ? activeUnitSession.title : `Ruang Baca & Pemahaman Konteks ${currentLevel}`}
+            </h3>
+          </div>
+        </div>
+
+        <button
+          onClick={() => {
+            audioService.playTapSound();
+            if (onProceedToConversation) onProceedToConversation();
+          }}
+          className="w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-[#784e2a] hover:bg-[#5c391d] text-white text-xs font-bold transition flex items-center justify-center space-x-2 shadow-xs cursor-pointer active:scale-95 shrink-0"
+        >
+          <span>Lanjut ke Percakapan (Conversation)</span>
+          <ArrowRight className="w-4 h-4" />
+        </button>
+      </div>
+
       {/* Top Reading Header & Interactive Audio Player Bar */}
       <div className="bg-[#fffdfa] rounded-3xl p-4 sm:p-5 border border-[#ebdccb] shadow-xs space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -190,17 +224,17 @@ export default function ReadingTab({
           {/* Speed Pills */}
           <div className="flex items-center space-x-1.5 self-end sm:self-auto">
             <Volume2 className="w-4 h-4 text-[#8c6849] mr-1" />
-            {[0.75, 1.0, 1.25].map(speed => (
+            {[0.75, 1.0, 1.25].map(sVal => (
               <button
-                key={speed}
-                onClick={() => setAudioSpeed(speed)}
+                key={sVal}
+                onClick={() => setSpeed(sVal)}
                 className={`px-2 py-0.5 text-xs rounded-lg font-semibold transition ${
-                  audioSpeed === speed
+                  speed === sVal
                     ? 'bg-[#3d2411] text-white font-bold'
                     : 'bg-white border border-[#ebdccb] text-[#784e2a] hover:bg-[#faf6f0]'
                 }`}
               >
-                {speed}x
+                {sVal}x
               </button>
             ))}
           </div>
@@ -421,13 +455,24 @@ export default function ReadingTab({
               );
             })}
 
-            <div className="pt-2">
+            <div className="pt-2 space-y-2">
               <button
                 onClick={handleCheckQuiz}
                 className="w-full py-3 rounded-2xl bg-[#784e2a] hover:bg-[#5c391d] text-white font-bold text-xs shadow-xs transition flex items-center justify-center space-x-1.5"
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Periksa Jawaban Cerita</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  audioService.playTapSound();
+                  if (onProceedToConversation) onProceedToConversation();
+                }}
+                className="w-full py-3 rounded-2xl bg-[#f5ece1] hover:bg-[#ead7c4] border border-[#dcc1a4] text-[#784e2a] font-extrabold text-xs transition flex items-center justify-center space-x-2 cursor-pointer shadow-2xs"
+              >
+                <span>Lanjut ke Percakapan (Conversation)</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>

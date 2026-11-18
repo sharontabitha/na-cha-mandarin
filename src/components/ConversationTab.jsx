@@ -13,16 +13,25 @@ import {
   Smile, 
   Clock, 
   RotateCcw,
-  Headphones
+  Headphones,
+  CheckCircle2,
+  Award,
+  ArrowRight
 } from 'lucide-react';
 import { DAILY_CONVERSATIONS } from '../data/conversationsData';
 import { audioService } from '../services/speechService';
 
-export default function ConversationTab({ globalShowPinyin = true }) {
+export default function ConversationTab({ 
+  globalShowPinyin = true,
+  audioSpeed = 1.0,
+  activeUnitSession = null,
+  onCompleteLesson = null,
+  onRepeatLesson = null
+}) {
   const [selectedCategory, setSelectedCategory] = useState("Shopping");
   const [showPinyin, setShowPinyin] = useState(globalShowPinyin);
   const [showIndonesian, setShowIndonesian] = useState(true);
-  const [audioSpeed, setAudioSpeed] = useState(1.0);
+  const [speed, setSpeed] = useState(audioSpeed || 1.0);
   const [activeSentenceIndex, setActiveSentenceIndex] = useState(null);
   const [isPlayingAll, setIsPlayingAll] = useState(false);
 
@@ -48,7 +57,7 @@ export default function ConversationTab({ globalShowPinyin = true }) {
     setActiveSentenceIndex(idx);
     audioService.playMandarin(
       text, 
-      audioSpeed,
+      speed,
       () => setActiveSentenceIndex(idx),
       () => setActiveSentenceIndex(null)
     );
@@ -74,7 +83,7 @@ export default function ConversationTab({ globalShowPinyin = true }) {
       setActiveSentenceIndex(index);
       const text = currentTopic.dialogues[index].hanzi;
       index++;
-      audioService.playMandarin(text, audioSpeed, null, () => {
+      audioService.playMandarin(text, speed, null, () => {
         setTimeout(playNext, 400);
       });
     };
@@ -84,6 +93,54 @@ export default function ConversationTab({ globalShowPinyin = true }) {
 
   return (
     <div className="py-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 animate-fadeIn">
+      {/* Guided Lesson Workflow Banner: Langkah 3/3 (Percakapan - Tahap Terakhir Unit) */}
+      <div className="bg-gradient-to-r from-[#f5ece1] to-[#faf6f0] p-4 sm:p-5 rounded-3xl border border-[#dcc1a4] flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs">
+        <div className="flex items-center space-x-3 text-left w-full sm:w-auto">
+          <div className="w-9 h-9 rounded-2xl bg-[#166534] text-white flex items-center justify-center font-black text-xs shrink-0 shadow-xs">
+            3/3
+          </div>
+          <div>
+            <div className="flex items-center space-x-2">
+              <span className="text-[10px] uppercase font-extrabold tracking-wider text-[#166534] bg-[#dcfce7] px-2 py-0.5 rounded-md border border-[#bbf7d0]">
+                TAHAP TERAKHIR UNIT
+              </span>
+              <span className="text-[11px] font-bold text-[#8c6849]">Langkah 3 dari 3</span>
+            </div>
+            <h3 className="text-sm font-bold text-[#3d2411] mt-0.5">
+              {activeUnitSession?.title ? activeUnitSession.title : `Latihan Dialog Percakapan Nyata`}
+            </h3>
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-2 w-full sm:w-auto">
+          {onRepeatLesson && (
+            <button
+              onClick={() => {
+                audioService.playTapSound();
+                onRepeatLesson();
+              }}
+              className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-2xl bg-[#faf6f0] hover:bg-[#f5ece1] text-[#784e2a] text-xs font-bold border border-[#ebdccb] transition flex items-center justify-center space-x-1.5 cursor-pointer"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Ulangi Unit</span>
+            </button>
+          )}
+
+          {onCompleteLesson && (
+            <button
+              onClick={() => {
+                audioService.playSuccessSound();
+                onCompleteLesson();
+              }}
+              className="flex-1 sm:flex-none px-4 py-2.5 rounded-2xl bg-[#166534] hover:bg-[#14532d] text-white text-xs font-bold transition flex items-center justify-center space-x-2 shadow-xs cursor-pointer active:scale-95"
+            >
+              <Award className="w-4 h-4 text-[#fcd34d]" />
+              <span>Akhiri Lesson (+100 XP)</span>
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* Top Header */}
       <div className="bg-[#fffdfa] rounded-3xl p-5 sm:p-6 border border-[#ebdccb] shadow-xs flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
@@ -139,15 +196,15 @@ export default function ConversationTab({ globalShowPinyin = true }) {
 
           {/* Speed Pills */}
           <div className="flex items-center space-x-1 bg-[#faf6f0] p-1 rounded-2xl border border-[#ebdccb] text-xs font-semibold">
-            {[0.75, 1.0, 1.25].map(speed => (
+            {[0.75, 1.0, 1.25].map(sVal => (
               <button
-                key={speed}
-                onClick={() => setAudioSpeed(speed)}
-                className={`px-2 py-1 rounded-xl ${
-                  audioSpeed === speed ? 'bg-[#3d2411] text-white font-bold' : 'text-[#784e2a]'
+                key={sVal}
+                onClick={() => setSpeed(sVal)}
+                className={`px-2 py-1 rounded-xl transition ${
+                  speed === sVal ? 'bg-[#3d2411] text-white font-bold' : 'text-[#784e2a]'
                 }`}
               >
-                {speed}x
+                {sVal}x
               </button>
             ))}
           </div>
@@ -255,6 +312,49 @@ export default function ConversationTab({ globalShowPinyin = true }) {
             <p className="mt-0.5 leading-relaxed text-[#784e2a]">
               Perhatikan partikel nada seperti 吧 (ba) untuk saran ramah, dan 呢 (ne) untuk bertanya balik. Jangan ragu memutar ulang audio untuk meniru jeda intonasi penutur asli!
             </p>
+          </div>
+        </div>
+
+        {/* Milestone Completion Card: Akhiri Lesson (+XP) atau Ulangi */}
+        <div className="p-6 bg-gradient-to-br from-[#fffdfa] via-[#f5ece1] to-[#fffdfa] rounded-3xl border-2 border-[#dcc1a4] shadow-sm text-center space-y-4">
+          <div className="w-12 h-12 mx-auto rounded-full bg-[#166534] text-white flex items-center justify-center text-xl shadow-md">
+            🎉
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-base sm:text-lg font-black text-[#3d2411]">
+              Selamat! Kamu Telah Menuntaskan Unit Pembelajaran Ini!
+            </h3>
+            <p className="text-xs text-[#784e2a] max-w-md mx-auto">
+              Kamu telah berhasil melalui 3 tahapan: <strong>Kosakata &amp; Tata Bahasa</strong> ➔ <strong>Ruang Baca</strong> ➔ <strong>Percakapan Nyata</strong>.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            {onRepeatLesson && (
+              <button
+                onClick={() => {
+                  audioService.playTapSound();
+                  onRepeatLesson();
+                }}
+                className="w-full sm:w-auto px-5 py-3 rounded-2xl bg-white hover:bg-[#faf6f0] border border-[#ebdccb] text-[#784e2a] font-bold text-xs transition flex items-center justify-center space-x-2 shadow-2xs cursor-pointer"
+              >
+                <RotateCcw className="w-4 h-4" />
+                <span>Ulangi Unit Ini</span>
+              </button>
+            )}
+
+            {onCompleteLesson && (
+              <button
+                onClick={() => {
+                  audioService.playSuccessSound();
+                  onCompleteLesson();
+                }}
+                className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-[#166534] hover:bg-[#14532d] text-white font-extrabold text-xs shadow-md transition flex items-center justify-center space-x-2 cursor-pointer active:scale-95"
+              >
+                <Award className="w-4 h-4 text-[#fcd34d]" />
+                <span>Akhiri Lesson &amp; Klaim +100 XP 🏆</span>
+              </button>
+            )}
           </div>
         </div>
       </div>

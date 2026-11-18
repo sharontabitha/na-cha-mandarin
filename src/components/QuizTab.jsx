@@ -13,24 +13,60 @@ import {
   Award,
   Sparkles,
   ShieldCheck,
-  Check
+  Check,
+  Headphones,
+  BookOpen,
+  PenTool,
+  Mic,
+  Lock,
+  Unlock,
+  Layers
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { getQuizByLevel, HSK_LEVELS_META } from '../data/learningData';
+import { getMockTestByLevel, isLevelMockUnlocked } from '../data/mockTestData';
 import { audioService } from '../services/speechService';
 import Mascot from './Mascot';
 
 export default function QuizTab({ 
   currentLevel = "HSK 1", 
   onCompleteQuiz,
-  globalShowPinyin = true
+  globalShowPinyin = true,
+  completedUnits = [],
+  audioSpeed = 1.0,
+  onSelectTab = null
 }) {
   const quizData = getQuizByLevel(currentLevel);
   const activeLevelMeta = HSK_LEVELS_META[currentLevel] || HSK_LEVELS_META["HSK 1"];
+  const mockTestData = getMockTestByLevel(currentLevel);
+  const mockUnlockInfo = isLevelMockUnlocked(currentLevel, completedUnits);
+  const [previewBypass, setPreviewBypass] = useState(false);
+  const isMockUnlocked = mockUnlockInfo.isUnlocked || previewBypass;
 
   const [examMode, setExamMode] = useState('practice'); // 'practice' | 'mock'
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(quizData.timeLimitSeconds);
+
+  // Flatten Mock Test Questions into a single list with section tags
+  const allMockQuestions = React.useMemo(() => {
+    if (!mockTestData || !mockTestData.sections) return [];
+    const list = [];
+    let num = 1;
+    mockTestData.sections.forEach(sec => {
+      sec.questions.forEach(q => {
+        list.push({
+          ...q,
+          number: num++,
+          sectionId: sec.id,
+          sectionName: sec.name,
+          sectionDesc: sec.description
+        });
+      });
+    });
+    return list;
+  }, [mockTestData]);
+
+  const activeQuestions = examMode === 'mock' ? allMockQuestions : quizData.questions;
+  const [timeLeft, setTimeLeft] = useState(examMode === 'mock' ? 35 * 60 : quizData.timeLimitSeconds);
   const [userScore, setUserScore] = useState(0);
   const [answersState, setAnswersState] = useState({});
   const [showHint, setShowHint] = useState(false);
@@ -76,7 +112,7 @@ export default function QuizTab({
     setMascotReaction({ mood: 'happy', message: examMode === 'mock' ? '📋 Mode Simulasi HSK aktif! Konsentrasi penuh ya~' : 'Semangat belajar Mandarin! Cha-Cha siap menemanimu.' });
   }, [examMode]);
 
-  const currentQ = quizData.questions[currentQuestionIndex] || quizData.questions[0];
+  const currentQ = activeQuestions[currentQuestionIndex] || activeQuestions[0];
 
   // Timer countdown
   useEffect(() => {
@@ -101,7 +137,7 @@ export default function QuizTab({
   };
 
   const handlePlayAudio = (text) => {
-    audioService.playMandarin(text, 1.0);
+    audioService.playMandarin(text, audioSpeed || 1.0);
   };
 
   const handleToggleSentenceChip = (word) => {
@@ -197,7 +233,7 @@ export default function QuizTab({
       setAssembledWords([]);
       setSelectedLeft(null);
       setSelectedRight(null);
-      if (currentQuestionIndex < quizData.questions.length - 1) {
+      if (currentQuestionIndex < activeQuestions.length - 1) {
         setCurrentQuestionIndex(prev => prev + 1);
       } else {
         handleFinishQuiz();
@@ -325,113 +361,234 @@ export default function QuizTab({
 
   return (
     <div className="py-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 animate-fadeIn">
-      {/* Top Header: Evaluation Title & Live Stats */}
-      <div className="bg-[#fffdfa] rounded-3xl p-4 sm:p-5 border border-[#ebdccb] shadow-xs space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#784e2a] flex items-center justify-center text-white font-bold shadow-xs">
-              <Award className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center space-x-2 flex-wrap gap-y-1">
-                <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-lg bg-[#f5ece1] text-[#5c391d] border border-[#dcc1a4]">
-                  {currentLevel} · {examMode === 'mock' ? '📋 SIMULASI HSK MOCK EXAM' : 'EVALUASI LATIHAN'}
-                </span>
-                <span className="text-[#d97706] text-xs">★★★★</span>
-                {/* Exam Mode Toggle */}
-                <button
-                  onClick={() => {
-                    const newMode = examMode === 'mock' ? 'practice' : 'mock';
-                    setExamMode(newMode);
-                    setCurrentQuestionIndex(0);
-                    setAnswersState({});
-                    setAssembledWords([]);
-                    setMatchedPairs({});
-                    setTimeLeft(newMode === 'mock' ? 35 * 60 : quizData.timeLimitSeconds);
-                    audioService.playTapSound();
-                  }}
-                  className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-lg border transition ${
-                    examMode === 'mock'
-                      ? 'bg-[#784e2a] text-white border-[#5c391d]'
-                      : 'bg-[#faf6f0] text-[#784e2a] border-[#ebdccb] hover:bg-[#f5ece1]'
-                  }`}
-                >
-                  {examMode === 'mock' ? '📋 Mock ON' : '📋 Coba Mock Exam'}
-                </button>
-              </div>
-              <h1 className="text-base sm:text-lg font-bold text-[#3d2411] mt-0.5">
-                {examMode === 'mock' ? `Simulasi Ujian HSK ${currentLevel} — 35 Menit` : quizData.title}
-              </h1>
-            </div>
-          </div>
+      {/* Mode Switcher: Latihan Evaluasi Harian vs Simulasi Resmi Mock Test */}
+      <div className="bg-[#fffdfa] rounded-2xl p-1.5 border border-[#ebdccb] shadow-2xs flex items-center justify-between gap-2 max-w-md mx-auto">
+        <button
+          onClick={() => {
+            setExamMode('practice');
+            setCurrentQuestionIndex(0);
+            setAnswersState({});
+            setAssembledWords([]);
+            setMatchedPairs({});
+            setTimeLeft(quizData.timeLimitSeconds);
+            audioService.playTapSound();
+          }}
+          className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 cursor-pointer ${
+            examMode === 'practice'
+              ? 'bg-[#784e2a] text-white shadow-xs'
+              : 'text-[#784e2a] hover:bg-[#f5ece1]'
+          }`}
+        >
+          <span>📝 Latihan Harian</span>
+        </button>
 
-          {/* Stats pills */}
-          <div className="flex items-center space-x-2 sm:space-x-3 text-xs self-end sm:self-auto">
-            <div className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold border ${
-              isTimerWarning
-                ? 'bg-[#fee2e2] text-[#991b1b] border-[#fecaca] timer-warning'
-                : 'bg-[#faf6f0] text-[#5c391d] border-[#ebdccb]'
-            }`}>
-              <Clock className="w-3.5 h-3.5" />
-              <span>SISA WAKTU {formatTime(timeLeft)}</span>
-              {isTimerWarning && <span className="animate-pulse">⚠️</span>}
-            </div>
-            <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#fef3c7] border border-[#fde68a] text-[#78350f] font-bold">
-              <Zap className="w-3.5 h-3.5 text-[#d97706] fill-[#d97706]" />
-              <span>+{quizData.xpAccumulated} XP</span>
-            </div>
-            <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#f0fdf4] border border-[#bbf7d0] text-[#166534] font-bold">
-              <Target className="w-3.5 h-3.5 text-[#15803d]" />
-              <span>Akurasi {calculateAccuracy()}%</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Question Navigator Bar */}
-        <div className="pt-2 border-t border-[#f5ece1] flex flex-wrap items-center justify-between gap-2">
-          <span className="text-xs font-semibold text-[#8c6849]">
-            Navigasi Soal:
-          </span>
-          <div className="flex items-center space-x-1.5 overflow-x-auto py-1">
-            {quizData.questions.map((q, idx) => {
-              const isCurrent = currentQuestionIndex === idx;
-              const isAnswered = answersState[q.id];
-
-              return (
-                <button
-                  key={q.id}
-                  onClick={() => setCurrentQuestionIndex(idx)}
-                  className={`w-7 h-7 rounded-xl text-xs font-bold transition flex items-center justify-center ${
-                    isCurrent
-                      ? 'bg-[#784e2a] text-white shadow-xs'
-                      : isAnswered
-                      ? isAnswered.isCorrect
-                        ? 'bg-[#dcfce7] text-[#15803d] border border-[#bbf7d0]'
-                        : 'bg-[#fee2e2] text-[#991b1b] border border-[#fecaca]'
-                      : 'bg-[#faf6f0] text-[#784e2a] hover:bg-[#f5ece1]'
-                  }`}
-                >
-                  {q.number}
-                </button>
-              );
-            })}
-          </div>
-          <div className="flex items-center space-x-3 text-[11px] text-[#8c6849]">
-            <span className="flex items-center space-x-1">
-              <span className="w-2 h-2 rounded-full bg-[#15803d]"></span>
-              <span>Selesai</span>
-            </span>
-            <span className="flex items-center space-x-1">
-              <span className="w-2 h-2 rounded-full bg-[#784e2a]"></span>
-              <span>Aktif</span>
-            </span>
-            <span className="flex items-center space-x-1">
-              <span className="w-2 h-2 rounded-full bg-[#dcc1a4]"></span>
-              <span>Belum</span>
-            </span>
-          </div>
-        </div>
+        <button
+          onClick={() => {
+            setExamMode('mock');
+            setCurrentQuestionIndex(0);
+            setAnswersState({});
+            setAssembledWords([]);
+            setMatchedPairs({});
+            setTimeLeft(35 * 60);
+            audioService.playTapSound();
+          }}
+          className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 cursor-pointer ${
+            examMode === 'mock'
+              ? 'bg-[#784e2a] text-white shadow-xs'
+              : 'text-[#784e2a] hover:bg-[#f5ece1]'
+          }`}
+        >
+          <span>🏆 Mock Test Resmi HSK</span>
+          {!isMockUnlocked && <Lock className="w-3.5 h-3.5 ml-1 opacity-70" />}
+        </button>
       </div>
+
+      {/* JIKA MOCK TEST DIPILIH TAPI BELUM DIBUKA */}
+      {examMode === 'mock' && !isMockUnlocked ? (
+        <div className="bg-[#fffdfa] rounded-3xl p-8 border-2 border-[#ebdccb] shadow-sm text-center space-y-6 max-w-2xl mx-auto animate-fadeIn">
+          <div className="w-16 h-16 rounded-3xl bg-[#f5ece1] text-[#784e2a] flex items-center justify-center mx-auto text-3xl border border-[#dcc1a4]">
+            🔒
+          </div>
+
+          <div className="space-y-2">
+            <span className="text-[10px] uppercase font-extrabold tracking-wider text-[#b45309] bg-[#fef3c7] px-3 py-1 rounded-full border border-[#fde68a]">
+              SYARAT KELULUSAN BAB BELUM TERPENUHI
+            </span>
+            <h2 className="text-xl font-black text-[#3d2411]">
+              Simulasi Ujian Resmi HSK {currentLevel} Terkunci
+            </h2>
+            <p className="text-xs text-[#784e2a] max-w-md mx-auto leading-relaxed">
+              Untuk memastikan kesiapan ujian yang optimal, selesaikan seluruh bab unit pada tingkat <strong>{currentLevel}</strong> di Beranda terlebih dahulu.
+            </p>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="p-4 bg-[#faf6f0] rounded-2xl border border-[#ebdccb] space-y-2 text-left">
+            <div className="flex justify-between text-xs font-bold">
+              <span className="text-[#5c391d]">Progres Penyelesaian Bab:</span>
+              <span className="text-[#784e2a]">{mockUnlockInfo.completedCount} dari {mockUnlockInfo.totalCount} Unit ({mockUnlockInfo.percentage}%)</span>
+            </div>
+            <div className="w-full bg-[#ebdccb] h-3 rounded-full overflow-hidden">
+              <div 
+                className="bg-[#166534] h-full rounded-full transition-all duration-500"
+                style={{ width: `${mockUnlockInfo.percentage}%` }}
+              />
+            </div>
+          </div>
+
+          {/* 4 Skill Overview */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs text-left">
+            <div className="p-3 bg-[#faf6f0] rounded-xl border border-[#ebdccb]">
+              <span className="text-sm block">🎧</span>
+              <strong className="block text-[#3d2411] font-bold mt-1">Listening</strong>
+              <span className="text-[10px] text-[#8c6849]">Simulasi Audio Asli</span>
+            </div>
+            <div className="p-3 bg-[#faf6f0] rounded-xl border border-[#ebdccb]">
+              <span className="text-sm block">📖</span>
+              <strong className="block text-[#3d2411] font-bold mt-1">Reading</strong>
+              <span className="text-[10px] text-[#8c6849]">Pemahaman Hanzi</span>
+            </div>
+            <div className="p-3 bg-[#faf6f0] rounded-xl border border-[#ebdccb]">
+              <span className="text-sm block">✍️</span>
+              <strong className="block text-[#3d2411] font-bold mt-1">Writing</strong>
+              <span className="text-[10px] text-[#8c6849]">Susun Tata Bahasa</span>
+            </div>
+            <div className="p-3 bg-[#faf6f0] rounded-xl border border-[#ebdccb]">
+              <span className="text-sm block">🗣️</span>
+              <strong className="block text-[#3d2411] font-bold mt-1">Speaking</strong>
+              <span className="text-[10px] text-[#8c6849]">Pelafalan &amp; Nada</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            {onSelectTab && (
+              <button
+                onClick={() => onSelectTab('home')}
+                className="w-full sm:w-auto px-5 py-3 rounded-2xl bg-[#784e2a] hover:bg-[#5c391d] text-white text-xs font-bold transition flex items-center justify-center space-x-2 shadow-xs cursor-pointer active:scale-95"
+              >
+                <span>Buka Unit Belajar di Beranda</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            )}
+
+            <button
+              onClick={() => {
+                setPreviewBypass(true);
+                audioService.playSuccessSound();
+              }}
+              className="w-full sm:w-auto px-4 py-3 rounded-2xl bg-[#f5ece1] hover:bg-[#ead7c4] text-[#784e2a] border border-[#dcc1a4] text-xs font-bold transition flex items-center justify-center space-x-1.5 cursor-pointer"
+              title="Khusus Dosen / Asisten untuk menguji simulasi ujian langsung"
+            >
+              <Unlock className="w-4 h-4 text-[#d97706]" />
+              <span>Buka Kunci Demo Asisten / Review</span>
+            </button>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Top Header: Evaluation Title & Live Stats */}
+          <div className="bg-[#fffdfa] rounded-3xl p-4 sm:p-5 border border-[#ebdccb] shadow-xs space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-2xl bg-[#784e2a] flex items-center justify-center text-white font-bold shadow-xs">
+                  <Award className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center space-x-2 flex-wrap gap-y-1">
+                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-lg bg-[#f5ece1] text-[#5c391d] border border-[#dcc1a4]">
+                      {currentLevel} · {examMode === 'mock' ? '🏆 SIMULASI HSK RESMI' : 'EVALUASI LATIHAN'}
+                    </span>
+                    <span className="text-[#d97706] text-xs">★★★★</span>
+                  </div>
+                  <h1 className="text-base sm:text-lg font-bold text-[#3d2411] mt-0.5">
+                    {examMode === 'mock' ? `Simulasi Ujian Resmi HSK ${currentLevel} (Listening, Reading, Writing, Speaking)` : quizData.title}
+                  </h1>
+                </div>
+              </div>
+
+              {/* Stats pills */}
+              <div className="flex items-center space-x-2 sm:space-x-3 text-xs self-end sm:self-auto">
+                <div className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold border ${
+                  isTimerWarning
+                    ? 'bg-[#fee2e2] text-[#991b1b] border-[#fecaca] timer-warning'
+                    : 'bg-[#faf6f0] text-[#5c391d] border-[#ebdccb]'
+                }`}>
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>SISA WAKTU {formatTime(timeLeft)}</span>
+                  {isTimerWarning && <span className="animate-pulse">⚠️</span>}
+                </div>
+                <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#fef3c7] border border-[#fde68a] text-[#78350f] font-bold">
+                  <Zap className="w-3.5 h-3.5 text-[#d97706] fill-[#d97706]" />
+                  <span>+{examMode === 'mock' ? 500 : quizData.xpAccumulated} XP</span>
+                </div>
+                <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#f0fdf4] border border-[#bbf7d0] text-[#166534] font-bold">
+                  <Target className="w-3.5 h-3.5 text-[#15803d]" />
+                  <span>Akurasi {calculateAccuracy()}%</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Mock Test 4-Section Indicator Pills */}
+            {examMode === 'mock' && (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs pt-1">
+                <div className={`p-2 rounded-xl border transition flex items-center justify-center space-x-1.5 ${
+                  currentQ.sectionId === 'listening' ? 'bg-[#784e2a] text-white font-bold shadow-xs' : 'bg-[#faf6f0] text-[#8c6849] border-[#ebdccb]'
+                }`}>
+                  <Headphones className="w-3.5 h-3.5" />
+                  <span>1. Listening</span>
+                </div>
+                <div className={`p-2 rounded-xl border transition flex items-center justify-center space-x-1.5 ${
+                  currentQ.sectionId === 'reading' ? 'bg-[#784e2a] text-white font-bold shadow-xs' : 'bg-[#faf6f0] text-[#8c6849] border-[#ebdccb]'
+                }`}>
+                  <BookOpen className="w-3.5 h-3.5" />
+                  <span>2. Reading</span>
+                </div>
+                <div className={`p-2 rounded-xl border transition flex items-center justify-center space-x-1.5 ${
+                  currentQ.sectionId === 'writing' ? 'bg-[#784e2a] text-white font-bold shadow-xs' : 'bg-[#faf6f0] text-[#8c6849] border-[#ebdccb]'
+                }`}>
+                  <PenTool className="w-3.5 h-3.5" />
+                  <span>3. Writing</span>
+                </div>
+                <div className={`p-2 rounded-xl border transition flex items-center justify-center space-x-1.5 ${
+                  currentQ.sectionId === 'speaking' ? 'bg-[#784e2a] text-white font-bold shadow-xs' : 'bg-[#faf6f0] text-[#8c6849] border-[#ebdccb]'
+                }`}>
+                  <Mic className="w-3.5 h-3.5" />
+                  <span>4. Speaking</span>
+                </div>
+              </div>
+            )}
+
+            {/* Question Navigator Bar */}
+            <div className="pt-2 border-t border-[#f5ece1] flex flex-wrap items-center justify-between gap-2">
+              <span className="text-xs font-semibold text-[#8c6849]">
+                Navigasi Soal ({activeQuestions.length} Soal):
+              </span>
+              <div className="flex items-center space-x-1.5 overflow-x-auto py-1">
+                {activeQuestions.map((q, idx) => {
+                  const isCurrent = currentQuestionIndex === idx;
+                  const isAnswered = answersState[q.id];
+
+                  return (
+                    <button
+                      key={q.id}
+                      onClick={() => setCurrentQuestionIndex(idx)}
+                      className={`w-7 h-7 rounded-xl text-xs font-bold transition flex items-center justify-center cursor-pointer ${
+                        isCurrent
+                          ? 'bg-[#784e2a] text-white shadow-xs'
+                          : isAnswered
+                          ? isAnswered.isCorrect
+                            ? 'bg-[#dcfce7] text-[#15803d] border border-[#bbf7d0]'
+                            : 'bg-[#fee2e2] text-[#991b1b] border border-[#fecaca]'
+                          : 'bg-[#faf6f0] text-[#784e2a] hover:bg-[#f5ece1]'
+                      }`}
+                    >
+                      {idx + 1}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
 
       {/* Main Question Interface Card */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -788,6 +945,8 @@ export default function QuizTab({
           </div>
         </div>
       </div>
+      </>
+    )}
     </div>
   );
 }
