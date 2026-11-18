@@ -454,72 +454,72 @@ export default function ProfileTab({
         </div>
       </div>
 
-      {/* SECTION 3: TENTANG APLIKASI & INFORMASI TUGAS AKHIR (Syarat Wajib Profil/About) */}
+      {/* SECTION 3: TENTANG APLIKASI (About Na Cha) */}
       <div className="bg-[#fffdfa] rounded-3xl p-6 sm:p-7 border border-[#ebdccb] shadow-xs space-y-5 animate-fadeIn">
-        <div className="flex items-center space-x-2.5 pb-3 border-b border-[#f5ece1]">
-          <span className="w-2.5 h-4 bg-[#784e2a] rounded-sm"></span>
-          <h3 className="text-base font-bold text-[#3d2411]">
-            Tentang Aplikasi Na Cha &amp; Lembar Tugas Akhir
-          </h3>
-          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#dcfce7] text-[#15803d] border border-[#bbf7d0]">
-            PWA Verified ✓
+        <div className="flex items-center justify-between pb-3 border-b border-[#f5ece1]">
+          <div className="flex items-center space-x-2.5">
+            <span className="w-2.5 h-4 bg-[#784e2a] rounded-sm"></span>
+            <h3 className="text-base font-bold text-[#3d2411]">
+              Tentang Na Cha (关于奶茶)
+            </h3>
+          </div>
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#f5ece1] text-[#784e2a] border border-[#ebdccb]">
+            v1.0.0 · Production Ready
           </span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
-          {/* Sisi Kiri: Profil Aplikasi & Tech Stack */}
-          <div className="space-y-3 bg-[#faf6f0] p-4 sm:p-5 rounded-2xl border border-[#ebdccb]">
-            <h4 className="font-bold text-[#784e2a] text-sm flex items-center space-x-1.5">
-              <span>🧋 Na Cha (奶茶) Mandarin Learning App</span>
-            </h4>
-            <p className="text-[#5c391d] leading-relaxed">
-              Aplikasi media pembelajaran bahasa Mandarin interaktif tingkat HSK 1–3 berbasis Progressive Web Apps (PWA) dengan Spaced Repetition System (SRS), audio native sintetis, evaluasi kuis simulasi ujian, dan kemampuan offline caching.
-            </p>
-            <div className="pt-2 border-t border-[#ebdccb] space-y-1.5">
+          {/* Sisi Kiri: Profil & Visi Aplikasi */}
+          <div className="space-y-3 bg-[#faf6f0] p-4 sm:p-5 rounded-2xl border border-[#ebdccb] flex flex-col justify-between">
+            <div className="space-y-2">
+              <h4 className="font-bold text-[#784e2a] text-sm flex items-center space-x-1.5">
+                <span>🧋 Media Pembelajaran Mandarin Interaktif</span>
+              </h4>
+              <p className="text-[#5c391d] leading-relaxed">
+                <strong>Na Cha (奶茶)</strong> hadir untuk menemani perjalanan belajar bahasa Mandarin tingkat dasar hingga menengah (HSK 1–3) dengan suasana yang santai, hangat, dan interaktif seperti menikmati secangkir boba milk tea.
+              </p>
+            </div>
+            
+            <div className="pt-3 border-t border-[#ebdccb] space-y-1.5">
               <div className="flex justify-between">
-                <span className="text-[#8c6849]">Platform:</span>
-                <strong className="text-[#3d2411]">Progressive Web Apps (PWA)</strong>
+                <span className="text-[#8c6849]">Sasaran Belajar:</span>
+                <strong className="text-[#3d2411]">Kosakata, Tata Bahasa &amp; Percakapan HSK 1–3</strong>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#8c6849]">Versi Rilis:</span>
-                <strong className="text-[#3d2411]">v1.0.0 (Production Ready)</strong>
+                <span className="text-[#8c6849]">Metode Belajar:</span>
+                <strong className="text-[#3d2411]">Spaced Repetition &amp; Konteks Nyata</strong>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#8c6849]">Teknologi:</span>
-                <strong className="text-[#3d2411]">React 18 · Vite · Tailwind · Web Speech API</strong>
+                <span className="text-[#8c6849]">Aksesibilitas:</span>
+                <strong className="text-[#166534]">Dukungan Penuh Mobile &amp; Offline</strong>
               </div>
             </div>
           </div>
 
-          {/* Sisi Kanan: Web Service API & Informasi Tugas Akhir */}
+          {/* Sisi Kanan: Fitur Utama Aplikasi */}
           <div className="space-y-3 bg-[#faf6f0] p-4 sm:p-5 rounded-2xl border border-[#ebdccb]">
             <h4 className="font-bold text-[#784e2a] text-sm flex items-center space-x-1.5">
-              <span>📡 Integrasi Web Service (Modul 1)</span>
+              <span>✨ Fitur &amp; Keunggulan</span>
             </h4>
-            <div className="space-y-1.5 text-[#5c391d]">
-              <div className="flex justify-between">
-                <span className="text-[#8c6849]">Arsitektur API:</span>
-                <strong className="text-[#166534]">RESTful Web Service (Node.js)</strong>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-[#8c6849]">Port Server API:</span>
-                <code className="text-[#784e2a] font-mono font-bold">http://localhost:3001/api</code>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-[#8c6849]">Endpoints:</span>
-                <span className="text-[#3d2411] font-semibold">/vocabularies, /conversations, /quizzes</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-[#8c6849]">Mode Offline:</span>
-                <strong className="text-[#15803d]">Service Worker + Fallback Caching</strong>
-              </div>
-            </div>
-
-            <div className="pt-2 border-t border-[#ebdccb]">
-              <span className="text-[10px] text-[#8c6849] block">
-                Tugas Akhir Praktikum Pemrograman Mobile / Web Service 2026.
-              </span>
-            </div>
+            
+            <ul className="space-y-2 text-[#5c391d]">
+              <li className="flex items-start space-x-2">
+                <span className="text-[#784e2a] font-bold">🍵</span>
+                <span><strong>Mi Zi Ge &amp; Audio Pelafalan:</strong> Eksplorasi karakter Hanzi lengkap dengan radikal, arti, dan audio penutur asli.</span>
+              </li>
+              <li className="flex items-start space-x-2">
+                <span className="text-[#784e2a] font-bold">💬</span>
+                <span><strong>Simulasi Percakapan:</strong> Latihan dialog dunia nyata di kafe boba, pasar, transportasi umum, dan perkenalan.</span>
+              </li>
+              <li className="flex items-start space-x-2">
+                <span className="text-[#784e2a] font-bold">📖</span>
+                <span><strong>Ruang Baca &amp; Cerita:</strong> Cerita pendek interaktif dengan terjemahan per kalimat dan anotasi pinyin.</span>
+              </li>
+              <li className="flex items-start space-x-2">
+                <span className="text-[#784e2a] font-bold">🎯</span>
+                <span><strong>Kuis Adaptif:</strong> Evaluasi pemahaman dengan latihan soal pilihan ganda berbatas waktu dan pembahasan instan.</span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
