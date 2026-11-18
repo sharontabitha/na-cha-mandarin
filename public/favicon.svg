@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" rx="25" fill="#fff7ed"/>
+  {/* Straw */}
+  <path d="M60 10 L70 -5 L80 -2 L70 20" fill="#ef4444" stroke="#b91c1c" stroke-width="2"/>
+  {/* Lid */}
+  <ellipse cx="50" cy="24" rx="34" ry="7" fill="#fecaca" stroke="#dc2626" stroke-width="2"/>
+  {/* Cup */}
+  <path d="M22 24 L29 88 Q30 94 40 94 L60 94 Q70 94 71 88 L78 24 Z" fill="#fed7aa" stroke="#b45309" stroke-width="2"/>
+  {/* Boba */}
+  <circle cx="38" cy="84" r="5" fill="#451a03"/>
+  <circle cx="50" cy="86" r="5.5" fill="#451a03"/>
+  <circle cx="62" cy="83" r="5" fill="#451a03"/>
+  {/* Eyes */}
+  <path d="M37 50 Q41 45 45 50" stroke="#451a03" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M55 50 Q59 45 63 50" stroke="#451a03" stroke-width="2.5" stroke-linecap="round"/>
+  {/* Cheeks */}
+  <ellipse cx="32" cy="55" rx="3.5" ry="2" fill="#f87171"/>
+  <ellipse cx="68" cy="55" rx="3.5" ry="2" fill="#f87171"/>
+  {/* Smile */}
+  <path d="M46 56 Q50 61 54 56" fill="#dc2626" stroke="#451a03" stroke-width="1.8"/>
+</svg>

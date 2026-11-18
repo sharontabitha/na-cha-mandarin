@@ -1,0 +1,165 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #fbf7f2;
+    color: #3b2112;
+  }
+}
+
+/* Hanzi grid background (Mi Zi Ge pattern with milk-tea warm lines) */
+.mizige-bg {
+  background-color: #fffdfa;
+  background-image: 
+    linear-gradient(to right, rgba(148, 102, 59, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 102, 59, 0.12) 1px, transparent 1px),
+    linear-gradient(45deg, transparent 49.5%, rgba(148, 102, 59, 0.09) 50%, transparent 50.5%),
+    linear-gradient(-45deg, transparent 49.5%, rgba(148, 102, 59, 0.09) 50%, transparent 50.5%);
+  background-size: 100% 100%;
+}
+
+.tianzige-bg {
+  background-color: #fffdfa;
+  background-image: 
+    linear-gradient(to right, rgba(148, 102, 59, 0.15) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 102, 59, 0.15) 1px, transparent 1px);
+  background-size: 50% 50%;
+  background-position: center;
+}
+
+/* Ruby text styling for furigana pinyin */
+ruby {
+  ruby-align: center;
+  ruby-position: over;
+  display: inline-flex;
+  flex-direction: column-reverse;
+  vertical-align: bottom;
+  align-items: center;
+  margin: 0 1px;
+}
+
+rt {
+  font-size: 0.65em;
+  font-weight: 500;
+  color: #8c6849;
+  line-height: 1.1;
+  text-align: center;
+  user-select: none;
+}
+
+/* Custom sound wave animation */
+@keyframes soundwave {
+  0%, 100% { height: 4px; }
+  50% { height: 18px; }
+}
+
+.animate-wave-1 {
+  animation: soundwave 1s ease-in-out infinite;
+}
+.animate-wave-2 {
+  animation: soundwave 1s ease-in-out infinite 0.2s;
+}
+.animate-wave-3 {
+  animation: soundwave 1s ease-in-out infinite 0.4s;
+}
+.animate-wave-4 {
+  animation: soundwave 1s ease-in-out infinite 0.1s;
+}
+.animate-wave-5 {
+  animation: soundwave 1s ease-in-out infinite 0.3s;
+}
+
+/* Flashcard 3D flip */
+.perspective-1000 {
+  perspective: 1000px;
+}
+.transform-style-preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+}
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* Tooltip animation */
+@keyframes fadeInTooltip {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.tooltip-animate {
+  animation: fadeInTooltip 0.15s ease-out forwards;
+}
+
+/* Slide-in from right for drawers */
+@keyframes slideInFromRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.animate-slideLeft {
+  animation: slideInFromRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Mascot wiggle */
+@keyframes mascotWiggle {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-8deg) scale(1.1); }
+  50% { transform: rotate(0deg) scale(1.15); }
+  75% { transform: rotate(8deg) scale(1.1); }
+}
+.mascot-wiggle {
+  animation: mascotWiggle 0.5s ease-in-out;
+}
+
+/* Mascot sipping bounce */
+@keyframes mascotSip {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-4px); }
+  60% { transform: translateY(2px); }
+}
+.mascot-sip {
+  animation: mascotSip 0.6s ease-in-out;
+}
+
+/* Pinyin toggle pulse */
+@keyframes pinyinToggle {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+.pinyin-toggle-pulse {
+  animation: pinyinToggle 0.3s ease-out;
+}
+
+/* Exam mode countdown pulse */
+@keyframes timerWarning {
+  0%, 100% { color: #991b1b; }
+  50% { color: #ef4444; }
+}
+.timer-warning {
+  animation: timerWarning 1s ease-in-out infinite;
+}
+
+/* Tone bar shimmer */
+@keyframes toneHighlight {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+.tone-active {
+  animation: toneHighlight 1.5s ease-in-out infinite;
+}
+
+/* fadeIn */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out forwards;
+}

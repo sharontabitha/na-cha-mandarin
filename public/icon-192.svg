@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <rect width="192" height="192" rx="40" fill="#f5ece1"/>
+  <circle cx="96" cy="96" r="76" fill="#fffdfa" stroke="#dcc1a4" stroke-width="3"/>
+  <!-- Straw -->
+  <rect x="98" y="30" width="12" height="50" rx="6" transform="rotate(15 98 30)" fill="#ea580c"/>
+  <!-- Cup Body -->
+  <path d="M60 70 L70 148 C70 155 76 160 85 160 L107 160 C116 160 122 155 122 148 L132 70 Z" fill="#dcc1a4" stroke="#784e2a" stroke-width="5" stroke-linejoin="round"/>
+  <!-- Tea Liquid -->
+  <path d="M63 85 L70 146 C70 152 76 156 85 156 L107 156 C116 156 122 152 122 146 L129 85 Z" fill="#c49a6c"/>
+  <!-- Lid -->
+  <path d="M52 70 C52 64 60 60 70 60 L122 60 C132 60 140 64 140 70 Z" fill="#ffffff" stroke="#784e2a" stroke-width="5"/>
+  <!-- Boba Pearls -->
+  <circle cx="82" cy="140" r="7" fill="#3d2411"/>
+  <circle cx="96" cy="144" r="7" fill="#3d2411"/>
+  <circle cx="110" cy="140" r="7" fill="#3d2411"/>
+  <circle cx="89" cy="128" r="6" fill="#3d2411"/>
+  <circle cx="103" cy="128" r="6" fill="#3d2411"/>
+  <!-- Happy Eyes & Smile -->
+  <path d="M80 96 Q87 90 94 96" stroke="#3d2411" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <path d="M98 96 Q105 90 112 96" stroke="#3d2411" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <circle cx="76" cy="104" r="5" fill="#f87171" opacity="0.8"/>
+  <circle cx="116" cy="104" r="5" fill="#f87171" opacity="0.8"/>
+  <path d="M91 104 Q96 110 101 104" stroke="#3d2411" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+</svg>
