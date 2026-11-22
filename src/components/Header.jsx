@@ -70,20 +70,20 @@ export default function Header({
     <header className="sticky top-0 z-40 bg-[#fffdfa]/95 backdrop-blur border-b border-[#ebdccb] shadow-2xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo & Level Selector */}
+          {/* Logo */}
           <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
             {/* Brand Logo with Milk Tea Mascot */}
             <div 
               onClick={() => handleNavClick('home')}
-              className="flex items-center space-x-1.5 sm:space-x-2.5 cursor-pointer group shrink-0"
+              className="flex items-center space-x-2 sm:space-x-2.5 cursor-pointer group shrink-0"
             >
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-br from-[#f5ece1] to-[#ead7c4] border border-[#dcc1a4] flex items-center justify-center p-0.5 sm:p-1 shadow-2xs group-hover:scale-105 transition-transform shrink-0">
-                <Mascot size={26} mood="happy" />
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-br from-[#f5ece1] to-[#ead7c4] border border-[#dcc1a4] flex items-center justify-center p-0.5 sm:p-1 shadow-2xs group-hover:scale-105 transition-transform shrink-0">
+                <Mascot size={28} mood="happy" />
               </div>
               <div className="flex flex-col">
                 <div className="flex items-baseline space-x-1">
-                  <span className="text-base sm:text-xl font-black text-[#3d2411] tracking-tight whitespace-nowrap">
-                    Na Cha <span className="font-chinese text-xs sm:text-base font-bold text-[#94663b]">奶茶</span>
+                  <span className="text-lg sm:text-xl font-black text-[#3d2411] tracking-tight whitespace-nowrap">
+                    Na Cha <span className="font-chinese text-sm sm:text-base font-bold text-[#94663b]">奶茶</span>
                   </span>
                 </div>
                 <span className="text-[8px] sm:text-[9px] font-bold text-[#8c6849] tracking-wider -mt-1 hidden md:block">
@@ -91,120 +91,6 @@ export default function Header({
                 </span>
               </div>
             </div>
-
-            {/* Level Pill Dropdown (HSK 1, HSK 2, HSK 3 Filter) */}
-            <div className="relative shrink-0">
-              <button
-                onClick={() => setLevelDropdownOpen(!levelDropdownOpen)}
-                className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-extrabold rounded-xl bg-[#f5ece1] text-[#5c391d] border border-[#dcc1a4] hover:bg-[#ead7c4] transition-all shadow-2xs whitespace-nowrap"
-                title="Saring Level Materi HSK"
-              >
-                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#94663b]"></span>
-                <span>{activeMeta.name}</span>
-                <ChevronDown className={`w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#784e2a] transition-transform ${levelDropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              {levelDropdownOpen && (
-                <div className="absolute left-0 mt-2 w-64 bg-[#fffdfa] rounded-2xl shadow-xl border border-[#ebdccb] py-2 z-50 animate-fadeIn">
-                  <div className="px-3 py-1.5 border-b border-[#f5ece1] text-[10px] font-bold text-[#8c6849] uppercase tracking-wider">
-                    Pilih Level Materi:
-                  </div>
-                  {levels.map((lvl) => {
-                    const meta = HSK_LEVELS_META[lvl];
-                    const isCurrent = currentLevel === lvl;
-
-                    return (
-                      <button
-                        key={lvl}
-                        onClick={() => handleLevelSelect(lvl)}
-                        className={`w-full text-left px-3.5 py-2.5 flex items-center justify-between text-xs transition-colors ${
-                          isCurrent 
-                            ? 'bg-[#f5ece1] text-[#3d2411] font-black' 
-                            : 'text-[#5c391d] hover:bg-[#faf6f0]'
-                        }`}
-                      >
-                        <div>
-                          <div className="flex items-center space-x-1.5">
-                            <span className="font-extrabold">{meta.name}</span>
-                            <span className="text-[10px] text-[#8c6849] font-chinese font-normal">
-                              ({meta.chineseName})
-                            </span>
-                          </div>
-                          <span className="text-[10px] text-[#8c6849] block">
-                            Target {meta.targetWords} Kata · {meta.grammarPoints} Tata Bahasa
-                          </span>
-                        </div>
-                        {isCurrent && <Check className="w-4 h-4 text-[#784e2a] shrink-0" />}
-                      </button>
-                    );
-                  })}
-                  <div className="mt-1 pt-1.5 border-t border-[#f5ece1] px-3 py-1">
-                    <button
-                      onClick={() => handleNavClick('profile')}
-                      className="text-[11px] font-bold text-[#784e2a] hover:text-[#3d2411] block w-full text-center"
-                    >
-                      Buka Pengaturan Level Lengkap →
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Global Pinyin Toggle (Hanzi Purity Mode) - Desktop view */}
-            {setShowGlobalPinyin && (
-              <button
-                onClick={() => {
-                  setShowGlobalPinyin(!showGlobalPinyin);
-                  audioService.playTapSound();
-                }}
-                className={`hidden md:flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition border shrink-0 ${
-                  showGlobalPinyin 
-                    ? 'bg-[#f5ece1] text-[#5c391d] border-[#dcc1a4]' 
-                    : 'bg-[#faf6f0] text-[#8c6849] border-[#ebdccb]'
-                }`}
-                title={showGlobalPinyin ? "Pinyin Aktif: Klik untuk menyembunyikan (Mode Baca Hanzi Murni)" : "Pinyin Tersembunyi: Klik untuk mengaktifkan"}
-              >
-                <span className="font-chinese font-bold text-xs">文A</span>
-                <span className={`text-[9px] uppercase px-1 py-0.5 rounded font-mono font-bold ${showGlobalPinyin ? 'bg-[#784e2a] text-white' : 'bg-[#ebdccb] text-[#5c391d]'}`}>
-                  {showGlobalPinyin ? 'ON' : 'OFF'}
-                </span>
-              </button>
-            )}
-
-            {/* Audio Speed Toggle (🐢 0.75x / ⚡ 1.0x) - Desktop view */}
-            {setAudioSpeed && (
-              <button
-                onClick={() => {
-                  const nextSpeed = audioSpeed === 0.75 ? 1.0 : 0.75;
-                  setAudioSpeed(nextSpeed);
-                  audioService.setDefaultRate(nextSpeed);
-                  audioService.playTapSound();
-                }}
-                className={`hidden md:flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition border shrink-0 ${
-                  audioSpeed === 0.75
-                    ? 'bg-[#fef3c7] text-[#92400e] border-[#fde68a]'
-                    : 'bg-[#faf6f0] text-[#784e2a] border-[#ebdccb] hover:bg-[#f5ece1]'
-                }`}
-                title={`Kecepatan Audio: ${audioSpeed}x. Klik untuk mengubah ke ${audioSpeed === 0.75 ? '1.0x (Normal)' : '0.75x (Lambat)'}`}
-              >
-                <span>{audioSpeed === 0.75 ? '🐢 0.75x' : '⚡ 1.0x'}</span>
-              </button>
-            )}
-
-            {/* Install PWA Button */}
-            {onInstallApp && (
-              <button
-                onClick={() => {
-                  audioService.playTapSound();
-                  onInstallApp();
-                }}
-                className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-[#784e2a] hover:bg-[#5c391d] text-white transition shadow-2xs cursor-pointer active:scale-95 shrink-0"
-                title="Pasang aplikasi Na Cha di layar utama atau desktop Anda (PWA)"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>Pasang App</span>
-              </button>
-            )}
           </div>
 
           {/* DESKTOP NAVIGATION: ICON-ONLY NAVBAR (Streamlined to 5 core features) */}
@@ -428,19 +314,6 @@ export default function Header({
               <User className="w-4 h-4 shrink-0 text-[#784e2a]" />
               <span>Profil Pengguna &amp; Target Belajar</span>
             </button>
-
-            {onInstallApp && (
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onInstallApp();
-                }}
-                className="flex items-center justify-center space-x-2 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-[#784e2a] text-white shadow-sm mt-2 transition"
-              >
-                <Download className="w-4 h-4" />
-                <span>Pasang Aplikasi di Layar Utama (PWA)</span>
-              </button>
-            )}
           </div>
         </div>
       )}

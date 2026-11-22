@@ -12,6 +12,7 @@ import MobileBottomNav from './components/MobileBottomNav';
 import { USER_PROFILE } from './data/learningData';
 import { audioService } from './services/speechService';
 import confetti from 'canvas-confetti';
+import { Download, X } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
@@ -32,6 +33,22 @@ export default function App() {
   // Active Guided Unit Learning Session
   // { unitId, title, level, step: 'vocab' | 'reading' | 'conversation' }
   const [activeUnitSession, setActiveUnitSession] = useState(null);
+
+  // Optional Dismissible Install Banner State
+  const [showInstallBanner, setShowInstallBanner] = useState(() => {
+    try {
+      return localStorage.getItem('nacha_hide_install_banner') !== 'true';
+    } catch(e) {
+      return true;
+    }
+  });
+
+  const handleDismissInstallBanner = () => {
+    setShowInstallBanner(false);
+    try {
+      localStorage.setItem('nacha_hide_install_banner', 'true');
+    } catch(e) {}
+  };
 
   // PWA Install Prompt Listener
   React.useEffect(() => {
@@ -288,6 +305,45 @@ export default function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
       />
+
+      {/* Optional Dismissible Bottom Install App Banner */}
+      {showInstallBanner && (
+        <aside 
+          aria-label="Pemasangan Aplikasi"
+          className="fixed bottom-20 lg:bottom-4 left-3 right-3 sm:left-auto sm:right-6 sm:max-w-md z-40 bg-[#fffdfa]/95 backdrop-blur-md border border-[#dcc1a4] shadow-xl rounded-2xl p-3 sm:p-3.5 flex items-center justify-between gap-3 animate-fadeIn"
+        >
+          <div className="flex items-center space-x-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-xl bg-[#f5ece1] border border-[#dcc1a4] flex items-center justify-center shrink-0">
+              <Download className="w-4 h-4 text-[#784e2a]" />
+            </div>
+            <div className="min-w-0">
+              <span className="text-xs font-bold text-[#3d2411] block truncate">
+                Pasang Aplikasi Na Cha
+              </span>
+              <span className="text-[10px] text-[#8c6849] block truncate">
+                Akses cepat &amp; belajar offline di layar utama
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-1.5 shrink-0">
+            <button
+              onClick={handleInstallApp}
+              className="px-3 py-1.5 rounded-xl bg-[#784e2a] hover:bg-[#5c391d] text-white text-xs font-bold transition shadow-2xs active:scale-95 cursor-pointer"
+            >
+              Pasang
+            </button>
+            <button
+              onClick={handleDismissInstallBanner}
+              className="p-1 rounded-lg text-[#8c6849] hover:text-[#3d2411] hover:bg-[#f5ece1] transition cursor-pointer"
+              title="Hapus pemberitahuan ini"
+              aria-label="Hapus pemberitahuan ini"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </aside>
+      )}
 
       {/* Na Cha Brand Footer in Milk Tea Palette */}
       <footer className="mt-auto border-t border-[#ebdccb] bg-[#fffdfa]/95 py-6 text-xs text-[#8c6849]">
