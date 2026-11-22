@@ -31,6 +31,8 @@ export default function Header({
   onOpenBookmarks,
   showGlobalPinyin = true,
   setShowGlobalPinyin,
+  audioSpeed = 1.0,
+  setAudioSpeed,
   onInstallApp,
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

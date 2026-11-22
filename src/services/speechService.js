@@ -60,6 +60,11 @@ class AudioService {
       utterance.rate = Math.max(0.5, Math.min(effectiveRate, 1.5));
       utterance.pitch = 1.0;
 
+      if (!this.selectedVoice && this.speechSynth.getVoices) {
+        const voices = this.speechSynth.getVoices();
+        this.selectedVoice = voices.find(v => v.lang === 'zh-CN' || v.lang === 'zh_CN' || v.lang.startsWith('zh')) || null;
+      }
+
       if (this.selectedVoice) {
         utterance.voice = this.selectedVoice;
       }

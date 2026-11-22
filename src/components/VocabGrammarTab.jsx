@@ -26,6 +26,7 @@ export default function VocabGrammarTab({
   onCompleteLesson, 
   onStartFlashcardMode,
   globalShowPinyin = true,
+  audioSpeed = 1.0,
   activeUnitSession = null,
   onProceedToReading = null
 }) {
@@ -38,8 +39,20 @@ export default function VocabGrammarTab({
   const [showPinyin, setShowPinyin] = useState(globalShowPinyin);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDetailVocab, setSelectedDetailVocab] = useState(null);
-  const [isBookmarked, setIsBookmarked] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [bookmarkedMap, setBookmarkedMap] = useState(() => {
+    try {
+      const saved = localStorage.getItem('nacha_bookmarked_ids');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    const initial = {};
+    ['HSK 1', 'HSK 2', 'HSK 3'].forEach(lvl => {
+      getVocabulariesByLevel(lvl).forEach(v => {
+        if (v.isBookmarked) initial[v.id] = true;
+      });
+    });
+    return initial;
+  });
   const [completedVocabIds, setCompletedVocabIds] = useState(() => {
     try {
       const saved = localStorage.getItem('nacha_completed_vocabs');
@@ -67,6 +80,26 @@ export default function VocabGrammarTab({
 
   const currentVocab = vocabList[currentVocabIndex] || vocabList[0];
   const isCurrentVocabCompleted = Boolean(currentVocab && completedVocabIds[currentVocab.id]);
+  const isBookmarked = Boolean(currentVocab && bookmarkedMap[currentVocab.id]);
+
+  const handleToggleBookmark = () => {
+    if (!currentVocab) return;
+    const nextVal = !isBookmarked;
+    currentVocab.isBookmarked = nextVal;
+    setBookmarkedMap(prev => {
+      const updated = { ...prev };
+      if (nextVal) {
+        updated[currentVocab.id] = true;
+      } else {
+        delete updated[currentVocab.id];
+      }
+      try {
+        localStorage.setItem('nacha_bookmarked_ids', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+    audioService.playTapSound();
+  };
 
   const handleMarkCompleted = () => {
     if (!currentVocab || isCurrentVocabCompleted) return; // Strict: Hanya bisa tersimpan sekali
@@ -85,13 +118,14 @@ export default function VocabGrammarTab({
     }
   };
 
+  // Stop speech synthesis on unmount
   useEffect(() => {
-    if (currentVocab) {
-      setIsBookmarked(!!currentVocab.isBookmarked);
-    }
-  }, [currentVocabIndex, currentLevel]);
+    return () => {
+      audioService.stop();
+    };
+  }, []);
 
-  const handlePlayAudio = (text, rate = 1.0) => {
+  const handlePlayAudio = (text, rate = audioSpeed) => {
     setIsPlayingAudio(true);
     audioService.playMandarin(
       text, 
@@ -124,6 +158,8 @@ export default function VocabGrammarTab({
   const handleChipClick = (chip) => {
     if (selectedChips.find(c => c.id === chip.id)) {
       setSelectedChips(selectedChips.filter(c => c.id !== chip.id));
+      setExerciseResult(null);
+      audioService.playTapSound();
     } else {
       const nextChips = [...selectedChips, chip];
       setSelectedChips(nextChips);
@@ -215,13 +251,7 @@ export default function VocabGrammarTab({
 
           {/* Bookmark Button */}
           <button
-            onClick={() => {
-              if (currentVocab) {
-                currentVocab.isBookmarked = !isBookmarked;
-              }
-              setIsBookmarked(!isBookmarked);
-              audioService.playTapSound();
-            }}
+            onClick={handleToggleBookmark}
             className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 border shrink-0 ${
               isBookmarked
                 ? 'bg-[#fef3c7] text-[#78350f] border-[#fde68a]'

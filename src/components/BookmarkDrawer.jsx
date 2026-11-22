@@ -10,14 +10,36 @@ export default function BookmarkDrawer({
   onStartFlashcards 
 }) {
   const [selectedFilter, setSelectedFilter] = useState('ALL');
-  const [removedIds, setRemovedIds] = useState({});
+  const [bookmarkedMap, setBookmarkedMap] = useState(() => {
+    try {
+      const saved = localStorage.getItem('nacha_bookmarked_ids');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    const initial = {};
+    ['HSK 1', 'HSK 2', 'HSK 3'].forEach(lvl => {
+      getVocabulariesByLevel(lvl).forEach(v => {
+        if (v.isBookmarked) initial[v.id] = true;
+      });
+    });
+    return initial;
+  });
+
+  // Resync whenever drawer opens
+  React.useEffect(() => {
+    if (isOpen) {
+      try {
+        const saved = localStorage.getItem('nacha_bookmarked_ids');
+        if (saved) setBookmarkedMap(JSON.parse(saved));
+      } catch (e) {}
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   // Gather bookmarked vocabs across all levels
-  const vocabsHsk1 = getVocabulariesByLevel("HSK 1").filter(v => v.isBookmarked && !removedIds[v.id]);
-  const vocabsHsk2 = getVocabulariesByLevel("HSK 2").filter(v => v.isBookmarked && !removedIds[v.id]);
-  const vocabsHsk3 = getVocabulariesByLevel("HSK 3").filter(v => v.isBookmarked && !removedIds[v.id]);
+  const vocabsHsk1 = getVocabulariesByLevel("HSK 1").filter(v => bookmarkedMap[v.id]);
+  const vocabsHsk2 = getVocabulariesByLevel("HSK 2").filter(v => bookmarkedMap[v.id]);
+  const vocabsHsk3 = getVocabulariesByLevel("HSK 3").filter(v => bookmarkedMap[v.id]);
 
   const allBookmarked = [...vocabsHsk1, ...vocabsHsk2, ...vocabsHsk3];
 
@@ -27,13 +49,20 @@ export default function BookmarkDrawer({
 
   const handlePlay = (e, text) => {
     e.stopPropagation();
-    audioService.playMandarin(text, 1.0);
+    audioService.playMandarin(text);
   };
 
   const handleRemoveBookmark = (e, item) => {
     e.stopPropagation();
     item.isBookmarked = false;
-    setRemovedIds(prev => ({ ...prev, [item.id]: true }));
+    setBookmarkedMap(prev => {
+      const next = { ...prev };
+      delete next[item.id];
+      try {
+        localStorage.setItem('nacha_bookmarked_ids', JSON.stringify(next));
+      } catch (err) {}
+      return next;
+    });
     audioService.playTapSound();
   };
 

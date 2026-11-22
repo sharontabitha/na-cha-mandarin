@@ -34,6 +34,16 @@ export default function ConversationTab({
   const [speed, setSpeed] = useState(audioSpeed || 1.0);
   const [activeSentenceIndex, setActiveSentenceIndex] = useState(null);
   const [isPlayingAll, setIsPlayingAll] = useState(false);
+  const isPlayingRef = React.useRef(false);
+  const playNextTimeoutRef = React.useRef(null);
+
+  React.useEffect(() => {
+    return () => {
+      isPlayingRef.current = false;
+      if (playNextTimeoutRef.current) clearTimeout(playNextTimeoutRef.current);
+      audioService.stop();
+    };
+  }, []);
 
   React.useEffect(() => {
     setShowPinyin(globalShowPinyin);
@@ -65,6 +75,8 @@ export default function ConversationTab({
 
   const handlePlayAll = () => {
     if (isPlayingAll) {
+      isPlayingRef.current = false;
+      if (playNextTimeoutRef.current) clearTimeout(playNextTimeoutRef.current);
       audioService.stop();
       setIsPlayingAll(false);
       setActiveSentenceIndex(null);
@@ -72,11 +84,14 @@ export default function ConversationTab({
     }
 
     setIsPlayingAll(true);
+    isPlayingRef.current = true;
     let index = 0;
 
     const playNext = () => {
+      if (!isPlayingRef.current) return;
       if (index >= currentTopic.dialogues.length) {
         setIsPlayingAll(false);
+        isPlayingRef.current = false;
         setActiveSentenceIndex(null);
         return;
       }
@@ -84,7 +99,8 @@ export default function ConversationTab({
       const text = currentTopic.dialogues[index].hanzi;
       index++;
       audioService.playMandarin(text, speed, null, () => {
-        setTimeout(playNext, 400);
+        if (!isPlayingRef.current) return;
+        playNextTimeoutRef.current = setTimeout(playNext, 400);
       });
     };
 

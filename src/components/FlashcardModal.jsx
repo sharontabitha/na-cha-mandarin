@@ -19,17 +19,33 @@ export default function FlashcardModal({ isOpen, onClose, currentLevel = "HSK 1"
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
-  const [bookmarkedItems, setBookmarkedItems] = useState({});
+  const [bookmarkedMap, setBookmarkedMap] = useState(() => {
+    try {
+      const saved = localStorage.getItem('nacha_bookmarked_ids');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    const initial = {};
+    vocabList.forEach(v => {
+      if (v.isBookmarked) initial[v.id] = true;
+    });
+    return initial;
+  });
 
   useEffect(() => {
     setCurrentIndex(0);
     setIsFlipped(false);
+    if (isOpen) {
+      try {
+        const saved = localStorage.getItem('nacha_bookmarked_ids');
+        if (saved) setBookmarkedMap(JSON.parse(saved));
+      } catch (e) {}
+    }
   }, [currentLevel, isOpen]);
 
   if (!isOpen) return null;
 
   const currentItem = vocabList[currentIndex] || vocabList[0];
-  const isBookmarked = bookmarkedItems[currentItem.id] ?? currentItem.isBookmarked;
+  const isBookmarked = Boolean(currentItem && bookmarkedMap[currentItem.id]);
 
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
@@ -38,17 +54,26 @@ export default function FlashcardModal({ isOpen, onClose, currentLevel = "HSK 1"
 
   const handlePlayAudio = (e) => {
     e.stopPropagation();
-    audioService.playMandarin(currentItem.hanzi, 1.0);
+    audioService.playMandarin(currentItem.hanzi);
   };
 
   const toggleBookmark = (e) => {
     e.stopPropagation();
+    if (!currentItem) return;
     const nextVal = !isBookmarked;
     currentItem.isBookmarked = nextVal;
-    setBookmarkedItems(prev => ({
-      ...prev,
-      [currentItem.id]: nextVal
-    }));
+    setBookmarkedMap(prev => {
+      const next = { ...prev };
+      if (nextVal) {
+        next[currentItem.id] = true;
+      } else {
+        delete next[currentItem.id];
+      }
+      try {
+        localStorage.setItem('nacha_bookmarked_ids', JSON.stringify(next));
+      } catch (err) {}
+      return next;
+    });
     audioService.playTapSound();
   };
 

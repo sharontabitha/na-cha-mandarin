@@ -47,6 +47,13 @@ export default function ReadingTab({
   const [quizAnswers, setQuizAnswers] = useState({});
   const [quizSubmitted, setQuizSubmitted] = useState(false);
 
+  // Stop audio on unmount
+  useEffect(() => {
+    return () => {
+      audioService.stop();
+    };
+  }, []);
+
   // Reset when level changes
   useEffect(() => {
     setIsPlayingFullAudio(false);

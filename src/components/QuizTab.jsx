@@ -112,6 +112,23 @@ export default function QuizTab({
     setMascotReaction({ mood: 'happy', message: examMode === 'mock' ? '📋 Mode Simulasi HSK aktif! Konsentrasi penuh ya~' : 'Semangat belajar Mandarin! Cha-Cha siap menemanimu.' });
   }, [examMode]);
 
+  // Reset question interaction state when index changes
+  useEffect(() => {
+    setAssembledWords([]);
+    setSelectedLeft(null);
+    setSelectedRight(null);
+    setMatchedPairs({});
+    setShowHint(false);
+    setShowExplanation(false);
+  }, [currentQuestionIndex]);
+
+  // Stop audio on unmount
+  useEffect(() => {
+    return () => {
+      audioService.stop();
+    };
+  }, []);
+
   const currentQ = activeQuestions[currentQuestionIndex] || activeQuestions[0];
 
   // Timer countdown
@@ -233,6 +250,7 @@ export default function QuizTab({
       setAssembledWords([]);
       setSelectedLeft(null);
       setSelectedRight(null);
+      setMatchedPairs({});
       if (currentQuestionIndex < activeQuestions.length - 1) {
         setCurrentQuestionIndex(prev => prev + 1);
       } else {
