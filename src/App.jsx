@@ -16,7 +16,22 @@ import confetti from 'canvas-confetti';
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [currentLevel, setCurrentLevel] = useState("HSK 1");
+  const [audioSpeed, setAudioSpeed] = useState(() => audioService.getDefaultRate());
   const [installPrompt, setInstallPrompt] = useState(null);
+
+  // Completed Units Tracking across all levels
+  const [completedUnits, setCompletedUnits] = useState(() => {
+    try {
+      const saved = localStorage.getItem('nacha_completed_units');
+      if (saved) return JSON.parse(saved);
+    } catch(e) {}
+    // Initial completed units (matches MODULES_BY_LEVEL default)
+    return ["u-1-1", "u-1-2", "u-2-1", "u-2-2", "u-3-1"];
+  });
+
+  // Active Guided Unit Learning Session
+  // { unitId, title, level, step: 'vocab' | 'reading' | 'conversation' }
+  const [activeUnitSession, setActiveUnitSession] = useState(null);
 
   // PWA Install Prompt Listener
   React.useEffect(() => {
