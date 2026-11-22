@@ -26,7 +26,6 @@ export default function VocabGrammarTab({
   onCompleteLesson, 
   onStartFlashcardMode,
   globalShowPinyin = true,
-  audioSpeed = 1.0,
   activeUnitSession = null,
   onProceedToReading = null
 }) {
@@ -40,7 +39,6 @@ export default function VocabGrammarTab({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDetailVocab, setSelectedDetailVocab] = useState(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [localAudioSpeed, setLocalAudioSpeed] = useState(audioSpeed || 1.0);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [completedVocabIds, setCompletedVocabIds] = useState(() => {
     try {
@@ -93,7 +91,7 @@ export default function VocabGrammarTab({
     }
   }, [currentVocabIndex, currentLevel]);
 
-  const handlePlayAudio = (text, rate = audioSpeed) => {
+  const handlePlayAudio = (text, rate = 1.0) => {
     setIsPlayingAudio(true);
     audioService.playMandarin(
       text, 
@@ -408,9 +406,6 @@ export default function VocabGrammarTab({
                           <p className="text-xs font-bold text-[#3d2411] mt-0.5 line-clamp-1">
                             {item.indonesian}
                           </p>
-                          <span className="text-[10px] text-[#8c6849]">
-                            {item.tones}
-                          </span>
                         </div>
                       </div>
 
@@ -480,10 +475,10 @@ export default function VocabGrammarTab({
                 </span>
               </div>
 
-              {/* Audio Play & Speed Controls */}
+              {/* Audio Play Button */}
               <div className="flex items-center space-x-1.5 bg-[#faf6f0] border border-[#ebdccb] p-1 rounded-2xl">
                 <button
-                  onClick={() => handlePlayAudio(currentVocab.hanzi, audioSpeed)}
+                  onClick={() => handlePlayAudio(currentVocab.hanzi, 1.0)}
                   className={`p-1.5 rounded-xl text-white transition ${
                     isPlayingAudio ? 'bg-[#94663b] animate-pulse' : 'bg-[#784e2a] hover:bg-[#5c391d]'
                   }`}
@@ -491,22 +486,6 @@ export default function VocabGrammarTab({
                 >
                   <Volume2 className="w-4 h-4" />
                 </button>
-                <div className="flex space-x-1 text-[11px] font-semibold px-1">
-                  {[0.75, 1.0].map(speed => (
-                    <button
-                      key={speed}
-                      onClick={() => setAudioSpeed(speed)}
-                      className={`px-1.5 py-0.5 rounded ${
-                        audioSpeed === speed
-                          ? 'bg-[#5c391d] text-white font-bold'
-                          : 'text-[#8c6849] hover:text-[#3d2411]'
-                      }`}
-                    >
-                      {speed}x
-                    </button>
-                  ))}
-                </div>
-              </div>
             </div>
 
             {/* Huge Hanzi Display with Mi Zi Ge Background Grid */}
@@ -521,9 +500,6 @@ export default function VocabGrammarTab({
                   <span className="text-xl sm:text-2xl font-bold text-[#784e2a] font-chinese">
                     {currentVocab.pinyin}
                   </span>
-                  <span className="text-[11px] font-semibold text-[#8c6849] bg-[#f5ece1] border border-[#ebdccb] px-2 py-0.5 rounded-full">
-                    {currentVocab.tones}
-                  </span>
                 </div>
               )}
 
@@ -532,7 +508,7 @@ export default function VocabGrammarTab({
                 {currentVocab.indonesian}
               </p>
 
-              {/* Pitch & Tone Waveform Visualizer (Active during Audio Playback) */}
+              {/* Audio Playing Indicator */}
               {isPlayingAudio && (
                 <div className="mt-3 flex items-center space-x-2 px-3.5 py-1.5 bg-[#784e2a] text-white rounded-full text-xs animate-fadeIn shadow-xs">
                   <div className="flex items-center space-x-1 h-3.5">
@@ -541,7 +517,7 @@ export default function VocabGrammarTab({
                     <span className="w-1 bg-[#fcd34d] rounded-full animate-bounce h-2 delay-150"></span>
                     <span className="w-1 bg-[#fcd34d] rounded-full animate-bounce h-3 delay-100"></span>
                   </div>
-                  <span className="text-[11px] font-bold">Audio Native: {currentVocab.tones}</span>
+                  <span className="text-[11px] font-bold">Memutar audio...</span>
                 </div>
               )}
             </div>
@@ -606,9 +582,9 @@ export default function VocabGrammarTab({
             )}
           </div>
 
-          {/* Navigation & Spaced Repetition Buttons */}
+          {/* Navigation Buttons */}
           <div className="space-y-4 pt-4 border-t border-[#f5ece1]">
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
+            <div className="grid grid-cols-2 gap-2 text-xs">
               <button
                 onClick={handlePrevVocab}
                 disabled={currentVocabIndex === 0}
@@ -616,30 +592,6 @@ export default function VocabGrammarTab({
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Sebelumnya</span>
-              </button>
-
-              <button
-                onClick={() => handleSrsRating(1)}
-                className="px-2 py-2 rounded-2xl bg-[#fee2e2] border border-[#fecaca] text-[#991b1b] font-bold hover:bg-[#fca5a5]/40 transition flex flex-col items-center"
-              >
-                <span>Belum Hafal</span>
-                <span className="text-[10px] font-normal text-[#b91c1c]">1 Hari</span>
-              </button>
-
-              <button
-                onClick={() => handleSrsRating(3)}
-                className="px-2 py-2 rounded-2xl bg-[#fef3c7] border border-[#fde68a] text-[#78350f] font-bold hover:bg-[#fcd34d]/40 transition flex flex-col items-center"
-              >
-                <span>Cukup Ingat</span>
-                <span className="text-[10px] font-normal text-[#b45309]">3 Hari</span>
-              </button>
-
-              <button
-                onClick={() => handleSrsRating(7)}
-                className="px-2 py-2 rounded-2xl bg-[#dcfce7] border border-[#bbf7d0] text-[#14532d] font-bold hover:bg-[#86efac]/40 transition flex flex-col items-center"
-              >
-                <span>Sangat Hafal</span>
-                <span className="text-[10px] font-normal text-[#15803d]">7 Hari</span>
               </button>
 
               <button

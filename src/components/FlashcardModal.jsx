@@ -41,16 +41,6 @@ export default function FlashcardModal({ isOpen, onClose, currentLevel = "HSK 1"
     audioService.playMandarin(currentItem.hanzi, 1.0);
   };
 
-  const handleSrsAction = (days) => {
-    audioService.playSuccessSound();
-    setIsFlipped(false);
-    if (currentIndex < vocabList.length - 1) {
-      setCurrentIndex(prev => prev + 1);
-    } else {
-      onClose();
-    }
-  };
-
   const toggleBookmark = (e) => {
     e.stopPropagation();
     const nextVal = !isBookmarked;
@@ -198,38 +188,6 @@ export default function FlashcardModal({ isOpen, onClose, currentLevel = "HSK 1"
           </div>
         </div>
 
-        {/* SRS Rating Actions */}
-        <div className="p-4 sm:p-5 bg-[#faf6f0] border-t border-[#f5ece1] space-y-2">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#8c6849] block text-center">
-            EVALUASI MEMORI DAYA INGAT (SRS {currentLevel})
-          </span>
-
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              onClick={() => handleSrsAction(1)}
-              className="py-2.5 px-2 rounded-2xl bg-[#fee2e2] hover:bg-[#fca5a5]/50 text-[#991b1b] text-xs font-bold transition flex flex-col items-center"
-            >
-              <span>Belum Hafal</span>
-              <span className="text-[10px] font-normal text-[#b91c1c]">1 Hari</span>
-            </button>
-
-            <button
-              onClick={() => handleSrsAction(3)}
-              className="py-2.5 px-2 rounded-2xl bg-[#fef3c7] hover:bg-[#fcd34d]/50 text-[#78350f] text-xs font-bold transition flex flex-col items-center"
-            >
-              <span>Cukup Ingat</span>
-              <span className="text-[10px] font-normal text-[#b45309]">3 Hari</span>
-            </button>
-
-            <button
-              onClick={() => handleSrsAction(7)}
-              className="py-2.5 px-2 rounded-2xl bg-[#dcfce7] hover:bg-[#86efac]/50 text-[#14532d] text-xs font-bold transition flex flex-col items-center"
-            >
-              <span>Sangat Hafal</span>
-              <span className="text-[10px] font-normal text-[#15803d]">7 Hari</span>
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -32,8 +32,6 @@ export default function Header({
   showGlobalPinyin = true,
   setShowGlobalPinyin,
   onInstallApp,
-  audioSpeed = 1.0,
-  setAudioSpeed
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [levelDropdownOpen, setLevelDropdownOpen] = useState(false);
