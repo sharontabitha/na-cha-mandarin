@@ -163,7 +163,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fbf7f2] text-[#3d2411] flex flex-col pb-16 lg:pb-0">
+    <div className="min-h-screen bg-[#fbf7f2] text-[#3d2411] flex flex-col pb-24 lg:pb-0 overflow-x-hidden">
       {/* Top Header Navigation with Icon-Only Navbar & Milk Tea Palette */}
       <Header
         activeTab={activeTab}

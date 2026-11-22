@@ -183,11 +183,11 @@ export default function VocabGrammarTab({
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center space-x-2 sm:space-x-3 self-end md:self-auto">
+        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-start md:justify-end">
           {/* Pinyin Switch */}
           <button
             onClick={() => setShowPinyin(!showPinyin)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 border ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 border shrink-0 ${
               showPinyin 
                 ? 'bg-[#f5ece1] text-[#5c391d] border-[#dcc1a4]' 
                 : 'bg-[#faf6f0] text-[#8c6849] border-[#ebdccb]'
@@ -206,7 +206,7 @@ export default function VocabGrammarTab({
                 audioService.playTapSound();
                 onStartFlashcardMode();
               }}
-              className="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 bg-[#f5ece1] text-[#784e2a] hover:bg-[#ead7c4] border border-[#dcc1a4]"
+              className="px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 bg-[#f5ece1] text-[#784e2a] hover:bg-[#ead7c4] border border-[#dcc1a4] shrink-0"
               title="Buka Mode Ulas Flashcards SRS"
             >
               <span>🎴 Flashcards</span>
@@ -222,7 +222,7 @@ export default function VocabGrammarTab({
               setIsBookmarked(!isBookmarked);
               audioService.playTapSound();
             }}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 border ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 border shrink-0 ${
               isBookmarked
                 ? 'bg-[#fef3c7] text-[#78350f] border-[#fde68a]'
                 : 'bg-white text-[#8c6849] border-[#ebdccb] hover:bg-[#faf6f0]'
@@ -236,7 +236,7 @@ export default function VocabGrammarTab({
           <button
             disabled={isCurrentVocabCompleted}
             onClick={handleMarkCompleted}
-            className={`px-4 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-xs ${
+            className={`px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-xs shrink-0 ${
               isCurrentVocabCompleted
                 ? 'bg-[#166534] text-white cursor-default opacity-95'
                 : 'bg-[#784e2a] hover:bg-[#5c391d] text-white cursor-pointer active:scale-95'
@@ -281,37 +281,43 @@ export default function VocabGrammarTab({
       </div>
 
       {/* View Mode Switcher to prevent visual clutter & dizziness */}
-      <div className="flex items-center justify-between bg-[#fffdfa] rounded-2xl p-2 border border-[#ebdccb] shadow-2xs">
-        <div className="flex items-center space-x-1.5 sm:space-x-2 flex-wrap gap-y-1">
+      <div className="flex items-center justify-between bg-[#fffdfa] rounded-2xl p-1.5 sm:p-2 border border-[#ebdccb] shadow-2xs">
+        <div className="flex items-center space-x-1 sm:space-x-2 flex-wrap gap-y-1">
           <button
             onClick={() => setViewMode('vocab')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 ${
+            className={`px-2.5 sm:px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1 ${
               viewMode === 'vocab'
                 ? 'bg-[#784e2a] text-white shadow-xs'
                 : 'text-[#784e2a] hover:bg-[#f5ece1]'
             }`}
           >
-            <span>🎴 Kartu Terfokus</span>
+            <span>🎴</span>
+            <span className="xs:hidden">Kartu</span>
+            <span className="hidden xs:inline">Kartu Terfokus</span>
           </button>
           <button
             onClick={() => setViewMode('list')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 ${
+            className={`px-2.5 sm:px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1 ${
               viewMode === 'list'
                 ? 'bg-[#784e2a] text-white shadow-xs'
                 : 'text-[#784e2a] hover:bg-[#f5ece1]'
             }`}
           >
-            <span>📋 Daftar Kosakata (List View)</span>
+            <span>📋</span>
+            <span className="xs:hidden">Daftar</span>
+            <span className="hidden xs:inline">Daftar Kata</span>
           </button>
           <button
             onClick={() => setViewMode('grammar')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 ${
+            className={`px-2.5 sm:px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1 ${
               viewMode === 'grammar'
                 ? 'bg-[#784e2a] text-white shadow-xs'
                 : 'text-[#784e2a] hover:bg-[#f5ece1]'
             }`}
           >
-            <span>📐 Tata Bahasa</span>
+            <span>📐</span>
+            <span className="xs:hidden">Grammar</span>
+            <span className="hidden xs:inline">Tata Bahasa</span>
           </button>
           <button
             onClick={() => setViewMode('both')}
@@ -486,11 +492,12 @@ export default function VocabGrammarTab({
                 >
                   <Volume2 className="w-4 h-4" />
                 </button>
+              </div>
             </div>
 
             {/* Huge Hanzi Display with Mi Zi Ge Background Grid */}
-            <div className="relative mx-auto w-full max-w-[280px] sm:max-w-[320px] aspect-square rounded-3xl mizige-bg border-2 border-[#ebdccb] shadow-inner flex flex-col items-center justify-center p-6 text-center select-none group">
-              <div className="text-7xl sm:text-8xl font-black font-chinese text-[#3d2411] tracking-wider transition-transform group-hover:scale-105 duration-200">
+            <div className="relative mx-auto w-full max-w-[260px] sm:max-w-[320px] aspect-square rounded-3xl mizige-bg border-2 border-[#ebdccb] shadow-inner flex flex-col items-center justify-center p-4 sm:p-6 text-center select-none group">
+              <div className="text-6xl sm:text-7xl md:text-8xl font-black font-chinese text-[#3d2411] tracking-wider transition-transform group-hover:scale-105 duration-200">
                 {currentVocab.hanzi}
               </div>
 
@@ -836,10 +843,10 @@ export default function VocabGrammarTab({
 
       {/* DETAIL KOSAKATA MODAL (Master-Detail Halaman 1) */}
       {selectedDetailVocab && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#3d2411]/60 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-[#fffdfa] rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl border border-[#ebdccb] flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#3d2411]/60 backdrop-blur-xs animate-fadeIn">
+          <div className="bg-[#fffdfa] rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl border border-[#ebdccb] flex flex-col max-h-[92vh]">
             {/* Modal Header */}
-            <div className="p-4 sm:p-5 border-b border-[#f5ece1] flex items-center justify-between bg-[#faf6f0]">
+            <div className="p-3.5 sm:p-5 border-b border-[#f5ece1] flex items-center justify-between bg-[#faf6f0]">
               <div className="flex items-center space-x-2">
                 <span className="px-2.5 py-0.5 rounded-lg text-[11px] font-bold bg-[#f5ece1] text-[#5c391d] border border-[#dcc1a4]">
                   {selectedDetailVocab.hskLevel}
@@ -857,10 +864,10 @@ export default function VocabGrammarTab({
             </div>
 
             {/* Modal Body */}
-            <div className="p-6 overflow-y-auto space-y-5">
+            <div className="p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-5">
               {/* Giant Hanzi + Mi Zi Ge */}
-              <div className="relative mx-auto w-48 h-48 rounded-3xl mizige-bg border-2 border-[#ebdccb] shadow-inner flex flex-col items-center justify-center text-center">
-                <span className="text-6xl font-black font-chinese text-[#3d2411]">
+              <div className="relative mx-auto w-36 h-36 sm:w-48 sm:h-48 rounded-3xl mizige-bg border-2 border-[#ebdccb] shadow-inner flex flex-col items-center justify-center text-center">
+                <span className="text-5xl sm:text-6xl font-black font-chinese text-[#3d2411]">
                   {selectedDetailVocab.hanzi}
                 </span>
                 <span className="text-lg font-bold text-[#784e2a] font-mono mt-2">

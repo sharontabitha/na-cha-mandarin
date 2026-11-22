@@ -507,21 +507,22 @@ export default function QuizTab({
               </div>
 
               {/* Stats pills */}
-              <div className="flex items-center space-x-2 sm:space-x-3 text-xs self-end sm:self-auto">
-                <div className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold border ${
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs w-full sm:w-auto justify-start">
+                <div className={`flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl font-bold border shrink-0 ${
                   isTimerWarning
                     ? 'bg-[#fee2e2] text-[#991b1b] border-[#fecaca] timer-warning'
                     : 'bg-[#faf6f0] text-[#5c391d] border-[#ebdccb]'
                 }`}>
                   <Clock className="w-3.5 h-3.5" />
-                  <span>SISA WAKTU {formatTime(timeLeft)}</span>
+                  <span className="hidden xs:inline">SISA WAKTU </span>
+                  <span>{formatTime(timeLeft)}</span>
                   {isTimerWarning && <span className="animate-pulse">⚠️</span>}
                 </div>
-                <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#fef3c7] border border-[#fde68a] text-[#78350f] font-bold">
+                <div className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-[#fef3c7] border border-[#fde68a] text-[#78350f] font-bold shrink-0">
                   <Zap className="w-3.5 h-3.5 text-[#d97706] fill-[#d97706]" />
                   <span>+{examMode === 'mock' ? 500 : quizData.xpAccumulated} XP</span>
                 </div>
-                <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#f0fdf4] border border-[#bbf7d0] text-[#166534] font-bold">
+                <div className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-[#f0fdf4] border border-[#bbf7d0] text-[#166534] font-bold shrink-0">
                   <Target className="w-3.5 h-3.5 text-[#15803d]" />
                   <span>Akurasi {calculateAccuracy()}%</span>
                 </div>

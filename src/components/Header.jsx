@@ -69,37 +69,37 @@ export default function Header({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo & Level Selector */}
-          <div className="flex items-center space-x-3 sm:space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
             {/* Brand Logo with Milk Tea Mascot */}
             <div 
               onClick={() => handleNavClick('home')}
-              className="flex items-center space-x-2.5 cursor-pointer group"
+              className="flex items-center space-x-1.5 sm:space-x-2.5 cursor-pointer group shrink-0"
             >
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#f5ece1] to-[#ead7c4] border border-[#dcc1a4] flex items-center justify-center p-1 shadow-2xs group-hover:scale-105 transition-transform">
-                <Mascot size={32} mood="happy" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-br from-[#f5ece1] to-[#ead7c4] border border-[#dcc1a4] flex items-center justify-center p-0.5 sm:p-1 shadow-2xs group-hover:scale-105 transition-transform shrink-0">
+                <Mascot size={26} mood="happy" />
               </div>
               <div className="flex flex-col">
-                <div className="flex items-baseline space-x-1.5">
-                  <span className="text-xl font-black text-[#3d2411] tracking-tight">
-                    Na Cha <span className="font-chinese text-base font-bold text-[#94663b]">奶茶</span>
+                <div className="flex items-baseline space-x-1">
+                  <span className="text-base sm:text-xl font-black text-[#3d2411] tracking-tight whitespace-nowrap">
+                    Na Cha <span className="font-chinese text-xs sm:text-base font-bold text-[#94663b]">奶茶</span>
                   </span>
                 </div>
-                <span className="text-[9px] font-bold text-[#8c6849] tracking-wider -mt-1 hidden sm:block">
+                <span className="text-[8px] sm:text-[9px] font-bold text-[#8c6849] tracking-wider -mt-1 hidden md:block">
                   MANDARIN LEARNING
                 </span>
               </div>
             </div>
 
             {/* Level Pill Dropdown (HSK 1, HSK 2, HSK 3 Filter) */}
-            <div className="relative">
+            <div className="relative shrink-0">
               <button
                 onClick={() => setLevelDropdownOpen(!levelDropdownOpen)}
-                className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-extrabold rounded-xl bg-[#f5ece1] text-[#5c391d] border border-[#dcc1a4] hover:bg-[#ead7c4] transition-all shadow-2xs"
+                className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-extrabold rounded-xl bg-[#f5ece1] text-[#5c391d] border border-[#dcc1a4] hover:bg-[#ead7c4] transition-all shadow-2xs whitespace-nowrap"
                 title="Saring Level Materi HSK"
               >
-                <span className="w-2 h-2 rounded-full bg-[#94663b]"></span>
+                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#94663b]"></span>
                 <span>{activeMeta.name}</span>
-                <ChevronDown className={`w-3.5 h-3.5 text-[#784e2a] transition-transform ${levelDropdownOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#784e2a] transition-transform ${levelDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {levelDropdownOpen && (
@@ -148,14 +148,14 @@ export default function Header({
               )}
             </div>
 
-            {/* Global Pinyin Toggle (Hanzi Purity Mode) */}
+            {/* Global Pinyin Toggle (Hanzi Purity Mode) - Desktop view */}
             {setShowGlobalPinyin && (
               <button
                 onClick={() => {
                   setShowGlobalPinyin(!showGlobalPinyin);
                   audioService.playTapSound();
                 }}
-                className={`flex items-center space-x-1 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl text-xs font-bold transition border ${
+                className={`hidden md:flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition border shrink-0 ${
                   showGlobalPinyin 
                     ? 'bg-[#f5ece1] text-[#5c391d] border-[#dcc1a4]' 
                     : 'bg-[#faf6f0] text-[#8c6849] border-[#ebdccb]'
@@ -169,7 +169,7 @@ export default function Header({
               </button>
             )}
 
-            {/* Audio Speed Toggle (🐢 0.75x / ⚡ 1.0x) */}
+            {/* Audio Speed Toggle (🐢 0.75x / ⚡ 1.0x) - Desktop view */}
             {setAudioSpeed && (
               <button
                 onClick={() => {
@@ -178,7 +178,7 @@ export default function Header({
                   audioService.setDefaultRate(nextSpeed);
                   audioService.playTapSound();
                 }}
-                className={`flex items-center space-x-1 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl text-xs font-bold transition border ${
+                className={`hidden md:flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition border shrink-0 ${
                   audioSpeed === 0.75
                     ? 'bg-[#fef3c7] text-[#92400e] border-[#fde68a]'
                     : 'bg-[#faf6f0] text-[#784e2a] border-[#ebdccb] hover:bg-[#f5ece1]'
@@ -196,12 +196,11 @@ export default function Header({
                   audioService.playTapSound();
                   onInstallApp();
                 }}
-                className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-[#784e2a] hover:bg-[#5c391d] text-white transition shadow-2xs cursor-pointer active:scale-95"
+                className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-[#784e2a] hover:bg-[#5c391d] text-white transition shadow-2xs cursor-pointer active:scale-95 shrink-0"
                 title="Pasang aplikasi Na Cha di layar utama atau desktop Anda (PWA)"
               >
                 <Download className="w-3.5 h-3.5" />
-                <span className="hidden md:inline">Pasang App</span>
-                <span className="md:hidden">PWA</span>
+                <span>Pasang App</span>
               </button>
             )}
           </div>
@@ -249,11 +248,11 @@ export default function Header({
           </nav>
 
           {/* User Stats, Bookmark Quick Button, and Profile Avatar */}
-          <div className="flex items-center space-x-2 sm:space-x-3">
+          <div className="flex items-center space-x-1.5 sm:space-x-3 shrink-0">
             {/* Quick Bookmark Drawer Button */}
             <button
               onClick={onOpenBookmarks}
-              className="p-2 rounded-xl text-[#8c6849] hover:text-[#784e2a] hover:bg-[#f5ece1] transition relative"
+              className="p-1.5 sm:p-2 rounded-xl text-[#8c6849] hover:text-[#784e2a] hover:bg-[#f5ece1] transition relative"
               title="Kosakata Tersimpan (Bookmark)"
             >
               <Bookmark className="w-4 h-4" />
@@ -261,30 +260,30 @@ export default function Header({
             </button>
 
             {/* Streak */}
-            <div className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-[#faf6f0] border border-[#ebdccb] text-[#94663b] text-xs font-bold" title="Streak Belajar">
+            <div className="flex items-center space-x-1 px-2 py-1 rounded-full bg-[#faf6f0] border border-[#ebdccb] text-[#94663b] text-xs font-bold shrink-0" title="Streak Belajar">
               <Flame className="w-3.5 h-3.5 text-[#b45309] fill-[#b45309]" />
               <span>{userStats.streakDays}</span>
               <span className="hidden sm:inline text-[#8c6849] font-normal">Hari</span>
             </div>
 
             {/* XP */}
-            <div className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-[#fef3c7]/60 border border-[#fde68a] text-[#78350f] text-xs font-bold" title="Total XP">
+            <div className="hidden xs:flex items-center space-x-1 px-2 py-1 rounded-full bg-[#fef3c7]/60 border border-[#fde68a] text-[#78350f] text-xs font-bold shrink-0" title="Total XP">
               <Zap className="w-3.5 h-3.5 text-[#d97706] fill-[#d97706]" />
               <span>{userStats.xp.toLocaleString()}</span>
               <span className="hidden sm:inline text-[#92400e] font-normal">XP</span>
             </div>
 
             {/* USER PROFILE AVATAR MENU (The single, clear access point to profile) */}
-            <div className="relative pl-1 sm:pl-2 border-l border-[#ebdccb]">
+            <div className="relative pl-1 sm:pl-2 border-l border-[#ebdccb] shrink-0">
               <button
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                className="flex items-center space-x-2 p-1 rounded-2xl hover:bg-[#f5ece1] transition group"
+                className="flex items-center space-x-1.5 p-0.5 sm:p-1 rounded-2xl hover:bg-[#f5ece1] transition group"
                 title="Buka Pengaturan Akun & Level"
               >
                 <img
                   src={userProfile?.avatar || USER_PROFILE.avatar}
                   alt={userProfile?.name || USER_PROFILE.name}
-                  className="w-8 h-8 rounded-full object-cover ring-2 ring-[#dcc1a4] group-hover:ring-[#784e2a] transition"
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover ring-2 ring-[#dcc1a4] group-hover:ring-[#784e2a] transition shrink-0"
                 />
                 <span className="hidden md:block text-xs font-bold text-[#3d2411]">
                   {userProfile?.name || USER_PROFILE.name}
@@ -326,7 +325,7 @@ export default function Header({
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-[#784e2a] hover:text-[#3d2411] rounded-xl hover:bg-[#f5ece1]"
+              className="lg:hidden p-1.5 sm:p-2 text-[#784e2a] hover:text-[#3d2411] rounded-xl hover:bg-[#f5ece1] shrink-0"
               aria-label="Toggle Menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -337,29 +336,63 @@ export default function Header({
 
       {/* Mobile Drawer Navigation */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-[#ebdccb] bg-[#fffdfa] px-4 pt-2 pb-4 space-y-2 shadow-xl animate-fadeIn">
-          <div className="py-2 border-b border-[#f5ece1] flex items-center justify-between text-xs text-[#8c6849]">
-            <span>Filter Level:</span>
-            <span className="font-bold px-2.5 py-1 rounded-lg bg-[#f5ece1] text-[#5c391d] border border-[#dcc1a4]">
-              {activeMeta.name}
-            </span>
+        <div className="lg:hidden border-t border-[#ebdccb] bg-[#fffdfa] px-4 pt-2 pb-4 space-y-2.5 shadow-xl animate-fadeIn">
+          {/* Quick HSK Selector for Mobile */}
+          <div className="space-y-1.5 pb-2 border-b border-[#f5ece1]">
+            <div className="flex items-center justify-between text-xs text-[#8c6849]">
+              <span>Pilih Tingkat Level HSK:</span>
+              <span className="font-bold px-2 py-0.5 rounded-lg bg-[#f5ece1] text-[#5c391d] border border-[#dcc1a4]">
+                Aktif: {activeMeta.name}
+              </span>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {levels.map((lvl) => (
+                <button
+                  key={lvl}
+                  onClick={() => handleLevelSelect(lvl)}
+                  className={`py-1.5 text-xs font-bold rounded-xl border text-center transition ${
+                    currentLevel === lvl
+                      ? 'bg-[#784e2a] text-white border-[#784e2a] shadow-2xs'
+                      : 'bg-[#faf6f0] text-[#784e2a] border-[#ebdccb]'
+                  }`}
+                >
+                  {lvl}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Quick HSK Selector for Mobile */}
-          <div className="grid grid-cols-3 gap-2 pb-2 border-b border-[#f5ece1]">
-            {levels.map((lvl) => (
+          {/* Quick Learning Toggles on Mobile */}
+          <div className="grid grid-cols-2 gap-2 pb-2 border-b border-[#f5ece1]">
+            {setShowGlobalPinyin && (
               <button
-                key={lvl}
-                onClick={() => handleLevelSelect(lvl)}
-                className={`py-1.5 text-xs font-bold rounded-xl border text-center transition ${
-                  currentLevel === lvl
-                    ? 'bg-[#784e2a] text-white border-[#784e2a]'
-                    : 'bg-[#faf6f0] text-[#784e2a] border-[#ebdccb]'
+                onClick={() => {
+                  setShowGlobalPinyin(!showGlobalPinyin);
+                  audioService.playTapSound();
+                }}
+                className={`flex items-center justify-center space-x-1.5 px-2.5 py-2 rounded-xl text-xs font-bold transition border ${
+                  showGlobalPinyin
+                    ? 'bg-[#f5ece1] text-[#5c391d] border-[#dcc1a4]'
+                    : 'bg-[#faf6f0] text-[#8c6849] border-[#ebdccb]'
                 }`}
               >
-                {lvl}
+                <span className="font-chinese font-bold">文A</span>
+                <span>Pinyin: {showGlobalPinyin ? 'ON' : 'OFF'}</span>
               </button>
-            ))}
+            )}
+            {setAudioSpeed && (
+              <button
+                onClick={() => {
+                  const nextSpeed = audioSpeed === 0.75 ? 1.0 : 0.75;
+                  setAudioSpeed(nextSpeed);
+                  audioService.setDefaultRate(nextSpeed);
+                  audioService.playTapSound();
+                }}
+                className="flex items-center justify-center space-x-1.5 px-2.5 py-2 rounded-xl text-xs font-bold transition border bg-[#faf6f0] text-[#784e2a] border-[#ebdccb]"
+              >
+                <span>Audio: {audioSpeed === 0.75 ? '🐢 0.75x' : '⚡ 1.0x'}</span>
+              </button>
+            )}
           </div>
 
           <div className="grid grid-cols-1 gap-1.5 pt-1">

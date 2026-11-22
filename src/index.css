@@ -3,11 +3,25 @@
 @tailwind utilities;
 
 @layer base {
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
   body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     background-color: #fbf7f2;
     color: #3b2112;
   }
+}
+
+/* Safe area utilities for modern mobile phones (iPhone notch/home bar) */
+.pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+}
+.pt-safe {
+  padding-top: max(0.5rem, env(safe-area-inset-top, 0px));
 }
 
 /* Hanzi grid background (Mi Zi Ge pattern with milk-tea warm lines) */

@@ -84,7 +84,7 @@ export default function FlashcardModal({ isOpen, onClose, currentLevel = "HSK 1"
         </div>
 
         {/* 3D Flip Card Container */}
-        <div className="p-6 flex-1 flex flex-col items-center justify-center perspective-1000">
+        <div className="p-4 sm:p-6 flex-1 flex flex-col items-center justify-center perspective-1000 overflow-y-auto">
           <div
             onClick={handleFlip}
             className={`w-full aspect-[4/3] max-w-sm relative cursor-pointer select-none transition-transform duration-500 transform-style-preserve-3d ${
@@ -92,7 +92,7 @@ export default function FlashcardModal({ isOpen, onClose, currentLevel = "HSK 1"
             }`}
           >
             {/* FRONT FACE */}
-            <div className="absolute inset-0 rounded-3xl border-2 border-[#dcc1a4] bg-gradient-to-b from-white to-[#faf6f0] shadow-md hover:shadow-lg p-6 flex flex-col justify-between items-center text-center backface-hidden transition-shadow">
+            <div className="absolute inset-0 rounded-3xl border-2 border-[#dcc1a4] bg-gradient-to-b from-white to-[#faf6f0] shadow-md hover:shadow-lg p-5 sm:p-6 flex flex-col justify-between items-center text-center backface-hidden transition-shadow">
               {/* Top Controls */}
               <div className="w-full flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#f5ece1] text-[#5c391d] border border-[#dcc1a4]">
@@ -118,7 +118,7 @@ export default function FlashcardModal({ isOpen, onClose, currentLevel = "HSK 1"
 
               {/* Hanzi */}
               <div className="my-auto space-y-2">
-                <div className="text-7xl font-black font-chinese text-[#3d2411] tracking-wider">
+                <div className="text-6xl sm:text-7xl font-black font-chinese text-[#3d2411] tracking-wider">
                   {currentItem.hanzi}
                 </div>
                 <p className="text-xs text-[#8c6849] font-medium">
@@ -134,7 +134,7 @@ export default function FlashcardModal({ isOpen, onClose, currentLevel = "HSK 1"
             </div>
 
             {/* BACK FACE */}
-            <div className="absolute inset-0 rounded-3xl border-2 border-[#784e2a] bg-gradient-to-b from-[#fffdfa] to-[#f5ece1] shadow-md hover:shadow-lg p-6 flex flex-col justify-between items-center text-center rotate-y-180 backface-hidden transition-shadow">
+            <div className="absolute inset-0 rounded-3xl border-2 border-[#784e2a] bg-gradient-to-b from-[#fffdfa] to-[#f5ece1] shadow-md hover:shadow-lg p-5 sm:p-6 flex flex-col justify-between items-center text-center rotate-y-180 backface-hidden transition-shadow">
               {/* Top Controls */}
               <div className="w-full flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#ebdccb] text-[#5c391d] border border-[#dcc1a4]">
@@ -159,21 +159,21 @@ export default function FlashcardModal({ isOpen, onClose, currentLevel = "HSK 1"
               </div>
 
               {/* Back Content */}
-              <div className="my-auto space-y-2.5">
-                <div className="text-4xl font-black font-chinese text-[#3d2411]">
+              <div className="my-auto space-y-2">
+                <div className="text-3xl sm:text-4xl font-black font-chinese text-[#3d2411]">
                   {currentItem.hanzi}
                 </div>
                 <div>
-                  <span className="text-xl font-bold text-[#784e2a] font-chinese">
+                  <span className="text-lg sm:text-xl font-bold text-[#784e2a] font-chinese">
                     {currentItem.pinyin}
                   </span>
                   <span className="text-xs text-[#8c6849] ml-2 font-mono">({currentItem.tones})</span>
                 </div>
-                <p className="text-base font-bold text-[#3d2411]">
+                <p className="text-sm sm:text-base font-bold text-[#3d2411]">
                   {currentItem.indonesian}
                 </p>
                 {currentItem.example && (
-                  <p className="text-xs text-[#784e2a] italic max-w-xs mx-auto">
+                  <p className="text-xs text-[#784e2a] italic max-w-xs mx-auto line-clamp-2">
                     "{currentItem.example.hanzi} - {currentItem.example.indonesian}"
                   </p>
                 )}
@@ -186,6 +186,47 @@ export default function FlashcardModal({ isOpen, onClose, currentLevel = "HSK 1"
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Modal Navigation Footer */}
+        <div className="p-3 sm:p-4 bg-[#faf6f0] border-t border-[#f5ece1] flex items-center justify-between gap-2">
+          <button
+            onClick={() => {
+              if (currentIndex > 0) {
+                setCurrentIndex(prev => prev - 1);
+                setIsFlipped(false);
+                audioService.playTapSound();
+              }
+            }}
+            disabled={currentIndex === 0}
+            className="flex-1 py-2 sm:py-2.5 rounded-xl border border-[#ebdccb] bg-white text-xs font-bold text-[#784e2a] hover:bg-[#f5ece1] transition flex items-center justify-center space-x-1 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Sebelumnya</span>
+          </button>
+
+          <button
+            onClick={handleFlip}
+            className="px-3 py-2 sm:py-2.5 rounded-xl border border-[#dcc1a4] bg-[#f5ece1] text-xs font-bold text-[#5c391d] hover:bg-[#ead7c4] transition flex items-center justify-center space-x-1"
+          >
+            <RotateCw className="w-3.5 h-3.5" />
+            <span className="hidden xs:inline">Balik</span>
+          </button>
+
+          <button
+            onClick={() => {
+              if (currentIndex < vocabList.length - 1) {
+                setCurrentIndex(prev => prev + 1);
+                setIsFlipped(false);
+                audioService.playTapSound();
+              }
+            }}
+            disabled={currentIndex === vocabList.length - 1}
+            className="flex-1 py-2 sm:py-2.5 rounded-xl bg-[#784e2a] hover:bg-[#5c391d] text-white text-xs font-bold transition flex items-center justify-center space-x-1 disabled:opacity-40"
+          >
+            <span>Berikutnya</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
         </div>
 
       </div>

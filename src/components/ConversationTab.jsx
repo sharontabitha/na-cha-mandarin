@@ -261,7 +261,7 @@ export default function ConversationTab({
 
                 {/* Message Bubble */}
                 <div
-                  className={`max-w-xl rounded-3xl p-4 transition-all ${
+                  className={`max-w-[85%] sm:max-w-xl rounded-3xl p-3.5 sm:p-4 transition-all ${
                     isCurrentlyPlaying
                       ? 'ring-2 ring-[#94663b] bg-[#f5ece1] border border-[#dcc1a4]'
                       : isSpeakerRight

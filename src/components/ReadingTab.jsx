@@ -317,23 +317,23 @@ export default function ReadingTab({
 
             {/* Interactive Word Details Popup Floating Box */}
             {selectedWord && (
-              <div className="bg-[#fffdfa] rounded-3xl p-4 border-2 border-[#94663b] shadow-md flex items-center justify-between animate-fadeIn">
-                <div className="flex items-center space-x-4">
-                  <div className="text-3xl font-black font-chinese text-[#784e2a] bg-[#f5ece1] px-3 py-1.5 rounded-2xl border border-[#dcc1a4]">
+              <div className="bg-[#fffdfa] rounded-3xl p-3.5 sm:p-4 border-2 border-[#94663b] shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fadeIn">
+                <div className="flex items-center space-x-3 sm:space-x-4 min-w-0">
+                  <div className="text-2xl sm:text-3xl font-black font-chinese text-[#784e2a] bg-[#f5ece1] px-3 py-1.5 rounded-2xl border border-[#dcc1a4] shrink-0">
                     {selectedWord.hanzi}
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <div className="flex items-center space-x-2">
                       <span className="text-sm font-bold text-[#3d2411]">{selectedWord.pinyin}</span>
                       <span className="text-[10px] font-bold text-[#5c391d] bg-[#f5ece1] px-2 py-0.5 rounded border border-[#dcc1a4]">{currentLevel}</span>
                     </div>
-                    <p className="text-xs text-[#784e2a] font-medium mt-0.5">
+                    <p className="text-xs text-[#784e2a] font-medium mt-0.5 truncate">
                       Arti: {selectedWord.meaning || 'Kosakata penting dalam bab ini'}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 self-end sm:self-auto">
                   <button
                     onClick={() => handlePlayClip(selectedWord.hanzi)}
                     className="p-2 rounded-xl bg-[#784e2a] text-white hover:bg-[#5c391d] transition"
