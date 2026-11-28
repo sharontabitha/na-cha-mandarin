@@ -468,6 +468,19 @@ export default function ProfileTab({
           </span>
         </div>
 
+        {/* TOMBOL INTERAKTIF CHALLENGE: ALERT NIM & JUDUL TUGAS AKHIR */}
+        <button
+          type="button"
+          onClick={() => {
+            audioService.playSuccessSound();
+            alert("🎓 INFORMASI MAHASISWA & TUGAS AKHIR\n\nNIM: 21120124120016\nJudul: na-cha: aplikasi belajar bahasa mandarin");
+          }}
+          className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#784e2a] to-[#5c391d] hover:from-[#5c391d] hover:to-[#3d2411] text-white font-bold text-xs sm:text-sm shadow-md active:scale-98 transition-all flex items-center justify-center space-x-2.5 cursor-pointer border border-[#ebdccb]"
+        >
+          <span className="text-base">🎓</span>
+          <span>Lihat NIM &amp; Judul Tugas Akhir Mahasiswa</span>
+        </button>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
           {/* Sisi Kiri: Profil & Visi Aplikasi */}
           <div className="space-y-3 bg-[#faf6f0] p-4 sm:p-5 rounded-2xl border border-[#ebdccb] flex flex-col justify-between">

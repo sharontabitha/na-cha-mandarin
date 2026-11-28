@@ -2,10 +2,10 @@ import React from 'react';
 import { 
   Home, 
   BookMarked, 
-  Headphones, 
+  BookOpen, 
   Award, 
-  MessageSquare,
-  User
+  MessageSquare, 
+  User 
 } from 'lucide-react';
 import { audioService } from '../services/speechService';
 
@@ -13,7 +13,7 @@ export default function MobileBottomNav({ activeTab, setActiveTab }) {
   const tabs = [
     { id: 'home', label: 'Beranda', icon: Home },
     { id: 'vocab-grammar', label: 'Belajar', icon: BookMarked },
-    { id: 'reading', label: 'Membaca', icon: Headphones },
+    { id: 'reading', label: 'Cerita', icon: BookOpen },
     { id: 'conversation', label: 'Dialog', icon: MessageSquare },
     { id: 'quiz', label: 'Kuis', icon: Award },
     { id: 'profile', label: 'Profil', icon: User }
