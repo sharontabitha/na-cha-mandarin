@@ -46,7 +46,7 @@ export default function Header({
   const navItems = [
     { id: 'home', label: 'Beranda & Peta Belajar', icon: Home },
     { id: 'vocab-grammar', label: 'Kosakata & Tata Bahasa', icon: BookMarked },
-    { id: 'reading', label: 'Ruang Baca & Dengar', icon: Headphones },
+    { id: 'reading', label: 'Cerita', icon: BookOpen },
     { id: 'conversation', label: 'Percakapan Harian', icon: MessageSquare },
     { id: 'quiz', label: 'Kuis & Evaluasi', icon: Award }
   ];
