@@ -19,6 +19,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { DAILY_CONVERSATIONS } from '../data/conversationsData';
+import { apiService } from '../services/apiService';
 import { audioService } from '../services/speechService';
 
 export default function ConversationTab({ 
@@ -28,7 +29,21 @@ export default function ConversationTab({
   onCompleteLesson = null,
   onRepeatLesson = null
 }) {
+  const [conversationsList, setConversationsList] = useState(DAILY_CONVERSATIONS);
   const [selectedCategory, setSelectedCategory] = useState("Shopping");
+
+  // Fetch API Modul 1 untuk data dialog percakapan
+  React.useEffect(() => {
+    let isMounted = true;
+    apiService.getConversations()
+      .then(data => {
+        if (isMounted && data && Array.isArray(data) && data.length > 0) {
+          setConversationsList(data);
+        }
+      })
+      .catch(() => {});
+    return () => { isMounted = false; };
+  }, []);
   const [showPinyin, setShowPinyin] = useState(globalShowPinyin);
   const [showIndonesian, setShowIndonesian] = useState(true);
   const [speed, setSpeed] = useState(audioSpeed || 1.0);
@@ -49,7 +64,7 @@ export default function ConversationTab({
     setShowPinyin(globalShowPinyin);
   }, [globalShowPinyin]);
 
-  const currentTopic = DAILY_CONVERSATIONS.find(c => c.category === selectedCategory) || DAILY_CONVERSATIONS[0];
+  const currentTopic = conversationsList.find(c => c.category === selectedCategory) || conversationsList[0];
 
   const categories = [
     { id: "Shopping", label: "Shopping (Belanja)", icon: ShoppingBag },

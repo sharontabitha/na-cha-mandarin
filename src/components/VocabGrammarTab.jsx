@@ -18,6 +18,7 @@ import {
   X
 } from 'lucide-react';
 import { getVocabulariesByLevel, getGrammarByLevel, HSK_LEVELS_META } from '../data/learningData';
+import { apiService } from '../services/apiService';
 import { audioService } from '../services/speechService';
 import Mascot from './Mascot';
 
@@ -30,9 +31,25 @@ export default function VocabGrammarTab({
   activeUnitSession = null,
   onProceedToReading = null
 }) {
-  const vocabList = getVocabulariesByLevel(currentLevel);
+  const [vocabList, setVocabList] = useState(() => getVocabulariesByLevel(currentLevel));
   const grammarData = getGrammarByLevel(currentLevel);
   const activeLevelMeta = HSK_LEVELS_META[currentLevel] || HSK_LEVELS_META["HSK 1"];
+
+  // Pemanggilan (fetch/request) API Modul 1 dengan fallback otomatis
+  useEffect(() => {
+    let isMounted = true;
+    apiService.getVocabularies(currentLevel)
+      .then(data => {
+        if (isMounted && data && Array.isArray(data) && data.length > 0) {
+          setVocabList(data);
+        }
+      })
+      .catch(() => {
+        // Fallback jika API offline
+        if (isMounted) setVocabList(getVocabulariesByLevel(currentLevel));
+      });
+    return () => { isMounted = false; };
+  }, [currentLevel]);
 
   const [currentVocabIndex, setCurrentVocabIndex] = useState(0);
   const [viewMode, setViewMode] = useState('vocab'); // 'vocab' | 'list' | 'grammar' | 'both'
